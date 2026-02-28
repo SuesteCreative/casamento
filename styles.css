@@ -267,8 +267,9 @@ section {
 /* Details Section */
 .details-grid {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--gap-lg);
+  align-items: stretch;
 }
 
 .details-list {
@@ -293,11 +294,16 @@ section {
   flex-shrink: 0;
 }
 
+.details-media {
+  display: flex;
+  flex-direction: column;
+}
+
 .map-wrapper {
   border-radius: var(--radius);
   overflow: hidden;
-  height: 280px;
-  /* Even smaller map */
+  flex: 1;
+  min-height: 250px;
   box-shadow: var(--glass-shadow);
   border: 1px solid var(--glass-border);
 }
@@ -315,7 +321,8 @@ section {
 .map-links {
   display: flex;
   gap: var(--gap-sm);
-  margin-top: var(--gap-md);
+  margin-top: 1rem;
+  justify-content: flex-start;
 }
 
 .map-btn {
@@ -763,6 +770,10 @@ section {
   .hero-grid,
   .details-grid {
     grid-template-columns: 1fr;
+  }
+
+  .details-media .map-wrapper {
+    height: 250px;
   }
 
   .item-lg {
