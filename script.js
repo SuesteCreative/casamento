@@ -138,12 +138,23 @@ async function supabaseFetch(path, options = {}) {
 
   try {
     const res = await fetch(url, { ...options, headers });
+
+    // 204 No Content is common for PATCH
+    if (res.status === 204) return { success: true };
+
     if (!res.ok) {
       const errText = await res.text();
       throw new Error(`[${res.status}] ${errText || res.statusText}`);
     }
+
     const text = await res.text();
-    return text ? JSON.parse(text) : { success: true };
+    if (!text) return { success: true };
+
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      return { success: true, text };
+    }
   } catch (err) {
     console.error(`Supabase Fetch Error (${path}):`, err);
     throw err;
@@ -159,8 +170,9 @@ async function initGallery() {
     try {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
-      // Only fetch VISIBLE photos
-      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}`);
+      // Add cache buster for iPhone
+      const cacheBust = `&t=${Date.now()}`;
+      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}${cacheBust}`);
 
       const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
 
@@ -347,7 +359,8 @@ function openGalleryModal(img) {
 
   // Check ownership
   const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
-  const isOwner = myUploads.includes(String(card.dataset.id));
+  const cardId = String(card.dataset.id);
+  const isOwner = myUploads.map(String).includes(cardId);
 
   modal.classList.toggle('is-owner', isOwner);
 
@@ -387,14 +400,13 @@ async function deleteMyPhoto(id, path) {
 
   // 3. Update Supabase (Soft Delete)
   try {
-    const res = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`, {
+    await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ visibility: 'hidden' })
     });
-    console.log("Delete result:", res);
   } catch (err) {
     console.error("Supabase update failed:", err);
-    alert("Não conseguimos apagar no servidor, mas a foto ficará escondida para ti. Erro: " + err.message);
+    alert("Erro ao remover no servidor (mas ficará escondida para ti): " + err.message);
   }
 }
 
