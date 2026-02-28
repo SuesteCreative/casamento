@@ -164,7 +164,6 @@ async function initGallery() {
 
       grid.innerHTML = photos.map(p => {
         const title = p.title || 'Recordação';
-        const author = p.author ? `@${p.author}` : '';
 
         return `
           <article class="gallery-item reveal-on" 
@@ -181,6 +180,7 @@ async function initGallery() {
       }).join('');
       initScrollReveal();
     } catch (e) {
+      console.error("Gallery Load Error:", e);
       grid.innerHTML = `<p>Erro ao carregar memórias.</p>`;
     }
   }
@@ -233,41 +233,29 @@ async function initGallery() {
         const public_url = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
 
         // 2. Insert to Table
-        let inserted = null;
-        try {
-          inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Prefer': 'return=representation'
-            },
-            body: JSON.stringify({ path, title, public_url, author })
-          });
-        } catch (tableErr) {
-          // Fallback if 'author' column missing
-          inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Prefer': 'return=representation'
-            },
-            body: JSON.stringify({ path, title, public_url })
-          });
-        }
+        const inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({ path, title, public_url, author })
+        });
 
         // 3. Save ID to localStorage
         if (inserted && inserted[0]) {
           const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
-          myIds.push(inserted[0].id);
+          myIds.push(String(inserted[0].id)); // Save as string
           localStorage.setItem('wedding_my_ids', JSON.stringify(myIds));
         }
 
         status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
         form.reset();
-        const dropText = $('.drop-text', '#dropZone');
-        if (dropText) dropText.innerText = "Arrasta fotos ou clica aqui";
+        const dropT = $('.drop-text', '#dropZone');
+        if (dropT) dropT.innerText = "Arrasta fotos ou clica aqui";
 
+        // Refresh and close
         load();
         setTimeout(() => {
           const m = $('.modal.is-open');
@@ -275,11 +263,12 @@ async function initGallery() {
             m.classList.remove('is-open');
             document.body.style.overflow = '';
           }
-        }, 1500);
+        }, 1200);
       } catch (err) {
-        console.error("Upload Error:", err);
+        console.error("Upload Error Details:", err);
         status.style.color = "red";
         status.innerText = "Erro ao enviar. Tenta outra foto.";
+        // alert("Erro no upload: " + err.message); // Temporary debug for iPhone
       }
     });
   }
@@ -352,12 +341,11 @@ function openGalleryModal(img) {
 
   // Check ownership
   const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
-  const isOwner = myUploads.includes(parseInt(card.dataset.id)) || myUploads.includes(card.dataset.id);
+  const isOwner = myUploads.includes(String(card.dataset.id));
 
   modal.classList.toggle('is-owner', isOwner);
 
   if (deleteBtn) {
-    // Re-bind delete logic to this specific item
     deleteBtn.onclick = () => deleteMyPhoto(card.dataset.id, card.dataset.path);
   }
 
