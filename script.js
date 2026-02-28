@@ -364,8 +364,8 @@ function initDaisyBackground() {
 
     daisy.animate([
       { opacity: 0, transform: `scale(0.3) rotate(${rot}deg)` },
-      { opacity: 0.7, transform: `scale(1) rotate(${rot + 60}deg)`, offset: 0.3 },
-      { opacity: 0.7, transform: `scale(1) rotate(${rot + 120}deg)`, offset: 0.7 },
+      { opacity: 0.5, transform: `scale(1) rotate(${rot + 60}deg)`, offset: 0.3 },
+      { opacity: 0.5, transform: `scale(1) rotate(${rot + 120}deg)`, offset: 0.7 },
       { opacity: 0, transform: `scale(0.3) rotate(${rot + 200}deg)` }
     ], { duration: life, easing: 'ease-in-out' }).onfinish = () => daisy.remove();
 
