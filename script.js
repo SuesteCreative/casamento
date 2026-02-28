@@ -266,8 +266,17 @@ async function initGallery() {
         status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
         form.reset();
+        const dropText = $('.drop-text', '#dropZone');
+        if (dropText) dropText.innerText = "Arrasta fotos ou clica aqui";
+
         load();
-        setTimeout(() => closeModal($('.modal.is-open')), 1500);
+        setTimeout(() => {
+          const m = $('.modal.is-open');
+          if (m) {
+            m.classList.remove('is-open');
+            document.body.style.overflow = '';
+          }
+        }, 1500);
       } catch (err) {
         console.error("Upload Error:", err);
         status.style.color = "red";
