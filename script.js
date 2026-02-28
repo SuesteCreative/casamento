@@ -160,7 +160,7 @@ async function initGallery() {
       grid.innerHTML = photos.map(p => `
         <article class="gallery-item reveal-on">
           <img src="${p.public_url}" alt="${p.title || ''}" loading="lazy" />
-          ${p.title ? `<div class="item-overlay">${p.title}</div>` : ''}
+          <div class="item-title-bar">${p.title || 'Recordação'}</div>
         </article>
       `).join('');
       if (countSpan) countSpan.innerText = photos.length;
