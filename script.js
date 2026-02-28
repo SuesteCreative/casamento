@@ -129,23 +129,24 @@ function initModals() {
 /* --- SUPABASE & GALLERY --- */
 async function supabaseFetch(path, options = {}) {
   const headers = {
-    apikey: SUPABASE_ANON_KEY,
-    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
     ...options.headers
   };
-  const res = await fetch(`${SUPABASE_URL}${path}`, { ...options, headers });
-  if (!res.ok) {
-    if (res.status === 404) return null; // Handle missing items gracefully
-    const errText = await res.text();
-    console.error(`Supabase Error [${res.status}]:`, errText);
-    throw new Error(`Supabase error: ${res.statusText}`);
-  }
-  const text = await res.text();
-  if (!text) return options.method === 'PATCH' ? { success: true } : {};
+  const url = `${SUPABASE_URL}${path}`;
+
   try {
-    return JSON.parse(text);
+    const res = await fetch(url, { ...options, headers });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`[${res.status}] ${errText || res.statusText}`);
+    }
+    const text = await res.text();
+    return text ? JSON.parse(text) : { success: true };
   } catch (err) {
-    return { text };
+    console.error(`Supabase Fetch Error (${path}):`, err);
+    throw err;
   }
 }
 
@@ -245,7 +246,7 @@ async function initGallery() {
         });
 
         // 3. Save ID to localStorage
-        if (inserted && inserted[0]) {
+        if (inserted && Array.isArray(inserted) && inserted[0]) {
           const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
           const newId = String(inserted[0].id);
           if (!myIds.includes(newId)) {
@@ -256,25 +257,24 @@ async function initGallery() {
 
         status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
-        form.reset();
 
+        load();
+        form.reset();
         const dropT = $('.drop-text', '#dropZone');
         if (dropT) dropT.innerText = "Arrasta fotos ou clica aqui";
 
-        load();
-
-        // Final success delay before closing
         setTimeout(() => {
-          const m = $('.modal.is-open#uploadModal');
+          const m = $('#uploadModal');
           if (m) {
             m.classList.remove('is-open');
             document.body.style.overflow = '';
           }
         }, 1500);
       } catch (err) {
-        console.error("Upload Logic Error:", err);
+        console.error("Upload Error:", err);
         status.style.color = "red";
-        status.innerText = "Erro ao enviar. Tenta de novo.";
+        status.innerText = "Erro ao enviar. Tenta outra foto.";
+        alert("Erro no envio: " + err.message); // Explicit debug for iPhone
       }
     });
   }
@@ -377,18 +377,24 @@ async function deleteMyPhoto(id, path) {
 
   // 2. Save "Hidden" state locally so it persists on refresh
   const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
+  const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
+
   deletedIds.push(String(id));
   localStorage.setItem('wedding_deleted_ids', JSON.stringify(deletedIds));
 
+  // Also remove from my_ids to avoid showing delete button if it somehow re-appears
+  localStorage.setItem('wedding_my_ids', JSON.stringify(myIds.filter(i => String(i) !== String(id))));
+
   // 3. Update Supabase (Soft Delete)
   try {
-    await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`, {
+    const res = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ visibility: 'hidden' })
     });
+    console.log("Delete result:", res);
   } catch (err) {
-    console.warn("Supabase update failed, but item is hidden locally.", err);
+    console.error("Supabase update failed:", err);
+    alert("Não conseguimos apagar no servidor, mas a foto ficará escondida para ti. Erro: " + err.message);
   }
 }
 
