@@ -219,6 +219,12 @@ main {
   color: var(--clr-accent);
 }
 
+.cd-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .cd-slot small {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -473,6 +479,18 @@ main {
   .countdown-display {
     gap: var(--gap-xs);
   }
+}
+
+/* Reveal Animation */
+.reveal-on {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Divider */
