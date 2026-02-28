@@ -175,7 +175,6 @@ async function initGallery() {
                  onload="updateLoadedCount();" />
             <div class="item-title-bar">
               <span class="item-text text-truncate">${title}</span>
-              <span class="item-author text-truncate">${author}</span>
             </div>
           </article>
         `;
