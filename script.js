@@ -86,7 +86,8 @@ function initCarousel() {
   if (!viewport || !btnPrev) return;
 
   const scroll = (dir) => {
-    const amount = viewport.clientWidth * 0.8;
+    // Scroll by the width of one item + gap
+    const amount = 340;
     viewport.scrollBy({ left: dir * amount, behavior: 'smooth' });
   };
   btnNext.addEventListener('click', () => scroll(1));
@@ -139,8 +140,13 @@ async function supabaseFetch(path, options = {}) {
     ...options.headers
   };
   const res = await fetch(`${SUPABASE_URL}${path}`, { ...options, headers });
-  if (!res.ok) throw new Error(`Supabase error: ${res.statusText}`);
-  return res.json();
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error(`Supabase Error [${res.status}]:`, errText);
+    throw new Error(`Supabase error: ${res.statusText}`);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : {};
 }
 
 async function initGallery() {
@@ -178,31 +184,54 @@ async function initGallery() {
 
       status.innerText = "A enviar...";
       try {
-        const path = `uploads/${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+        const path = `uploads/${Date.now()}-${file.name.replace(/[^\w.-]/g, '_')}`;
+
         // 1. Upload to Storage
-        await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
+        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
           method: 'PUT',
-          headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': file.type
+          },
           body: file
         });
+
+        if (!uploadRes.ok) {
+          const err = await uploadRes.text();
+          console.error("Storage Error:", err);
+          throw new Error("Upload failed");
+        }
 
         const public_url = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
 
         // 2. Insert to Table
         await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
           body: JSON.stringify({ path, title, public_url })
         });
 
+        status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
         form.reset();
+        const dropText = $('.drop-text', '#dropZone');
+        if (dropText) dropText.innerText = "Arrasta fotos ou clica aqui";
+
         setTimeout(() => {
-          $('.modal.is-open').classList.remove('is-open');
-          document.body.style.overflow = '';
+          const open = $('.modal.is-open');
+          if (open) {
+            open.classList.remove('is-open');
+            document.body.style.overflow = '';
+          }
           load();
         }, 1500);
       } catch (err) {
+        console.error("Upload Catch:", err);
+        status.style.color = "red";
         status.innerText = "Erro ao enviar. Tenta de novo.";
       }
     });
