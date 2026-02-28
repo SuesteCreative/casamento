@@ -132,7 +132,6 @@ function initModals() {
   if (btnUpload) btnUpload.addEventListener('click', () => openModal('uploadModal'));
 }
 
-/* --- SUPABASE & GALLERY --- */
 async function supabaseFetch(path, options = {}) {
   const isGet = !options.method || options.method === 'GET';
   const headers = {
@@ -145,25 +144,37 @@ async function supabaseFetch(path, options = {}) {
   try {
     const connector = path.includes('?') ? '&' : '?';
     const finalUrl = isGet ? `${SUPABASE_URL}${path}${connector}cb=${Date.now()}` : `${SUPABASE_URL}${path}`;
+
     const res = await fetch(finalUrl, { ...options, headers });
+
+    // Status 204 means success but no content
     if (res.status === 204) return [];
 
+    const text = await res.text();
     if (!res.ok) {
-      console.warn(`Supabase Fetch Error [${res.status}]`);
-      return [];
+      console.warn(`Supabase API error (${res.status}): ${text}`);
+      return []; // Return empty array to prevent filtering logic from crashing
     }
 
-    const text = await res.text();
     if (!text) return [];
 
     try {
       const data = JSON.parse(text);
-      return Array.isArray(data) ? data : [data];
+      // If it's an object with 'code' or 'message', it's actually an error response
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        if (data.code || data.message || data.hint) {
+          console.warn("Supabase returned an error object:", data);
+          return [];
+        }
+        return [data];
+      }
+      return Array.isArray(data) ? data : (data ? [data] : []);
     } catch (e) {
+      console.error("JSON parse error:", e, text);
       return [];
     }
   } catch (err) {
-    console.error("Fetch Error:", err);
+    console.error("Network or fetch error:", err);
     return [];
   }
 }
@@ -178,8 +189,10 @@ async function initGallery() {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
 
-      // 1. Fetch only visible photos (supabaseFetch handles global cache busting)
-      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}`);
+      // Fetch everything that is not hidden. 
+      // In PostgREST, neq.hidden EXCLUDES nulls. We want nulls too (old photos).
+      // So we use or=(visibility.neq.hidden,visibility.is.null)
+      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?or=(visibility.neq.hidden,visibility.is.null)&select=*&order=${order}`);
 
       if (!photos || photos.length === 0) {
         console.log("No photos found in Supabase.");
@@ -188,14 +201,14 @@ async function initGallery() {
         return;
       }
 
-      console.log(`Gallery: Loaded ${photos.length} photos.`);
+      console.log(`Gallery: Displaying ${photos.length} photos.`);
 
       grid.innerHTML = photos
         .filter(p => p && p.id && p.public_url)
         .map(p => {
           const title = p.title || 'Recordação';
-          // Safari fix: force fresh image load with a unique per-render parameter
-          const imgUrl = `${p.public_url}?render=${Date.now()}`;
+          // Force unique URL per render to bypass Safari aggressive image cache
+          const imgUrl = p.public_url + (p.public_url.includes('?') ? '&' : '?') + `r=${Date.now()}`;
           return `
             <article class="gallery-item reveal-on" 
                      data-id="${p.id}" data-path="${p.path}" data-author="${p.author || ''}" data-title="${title}">
@@ -364,8 +377,8 @@ function initDaisyBackground() {
 
     daisy.animate([
       { opacity: 0, transform: `scale(0.3) rotate(${rot}deg)` },
-      { opacity: 0.7, transform: `scale(1) rotate(${rot + 60}deg)`, offset: 0.3 },
-      { opacity: 0.7, transform: `scale(1) rotate(${rot + 120}deg)`, offset: 0.7 },
+      { opacity: 0.9, transform: `scale(1) rotate(${rot + 60}deg)`, offset: 0.3 },
+      { opacity: 0.9, transform: `scale(1) rotate(${rot + 120}deg)`, offset: 0.7 },
       { opacity: 0, transform: `scale(0.3) rotate(${rot + 200}deg)` }
     ], { duration: life, easing: 'ease-in-out' }).onfinish = () => daisy.remove();
 

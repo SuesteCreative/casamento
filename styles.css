@@ -849,10 +849,10 @@ section {
   position: absolute;
   width: var(--size);
   height: var(--size);
-  background-image: url("imagens/daisy.webp");
+  background-image: url("imagens/daisy2.webp");
   background-size: contain;
   background-repeat: no-repeat;
   will-change: transform, opacity;
   opacity: 0;
-  z-index: 9999;
+  z-index: 99999;
 }
