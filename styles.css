@@ -486,17 +486,38 @@ section {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.8rem;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(5px);
   color: var(--clr-ink);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
   border-top: 1px solid var(--glass-border);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-delete-item {
+  color: #ff6b6b;
+  font-size: 1rem;
+  padding: 2px 5px;
+  margin-left: 5px;
+  border-radius: 4px;
+  display: none;
+  /* Only visible via JS check */
+}
+
+.gallery-item.can-delete .btn-delete-item {
+  display: block;
+}
+
+.btn-delete-item:hover {
+  background: rgba(255, 107, 107, 0.1);
 }
 
 .text-center {
@@ -537,7 +558,8 @@ section {
 
 .ugc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  /* Smaller cards */
   gap: var(--gap-md);
 }
 

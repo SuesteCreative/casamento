@@ -141,6 +141,7 @@ async function supabaseFetch(path, options = {}) {
   };
   const res = await fetch(`${SUPABASE_URL}${path}`, { ...options, headers });
   if (!res.ok) {
+    if (res.status === 404) return null; // Handle missing items gracefully
     const errText = await res.text();
     console.error(`Supabase Error [${res.status}]:`, errText);
     throw new Error(`Supabase error: ${res.statusText}`);
@@ -157,14 +158,23 @@ async function initGallery() {
   async function load() {
     try {
       const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=*&order=created_at.desc`);
-      grid.innerHTML = photos.map(p => `
-        <article class="gallery-item reveal-on">
-          <img src="${p.public_url}" alt="${p.title || ''}" loading="lazy" />
-          <div class="item-title-bar">${p.title || 'Recordação'}</div>
-        </article>
-      `).join('');
+      const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
+
+      grid.innerHTML = photos.map(p => {
+        const canDelete = myUploads.includes(p.id);
+        return `
+          <article class="gallery-item reveal-on ${canDelete ? 'can-delete' : ''}" data-id="${p.id}" data-path="${p.path}">
+            <img src="${p.public_url}" alt="${p.title || ''}" loading="lazy" 
+                 onerror="this.closest('.gallery-item').remove()" />
+            <div class="item-title-bar">
+              <span>${p.title || 'Recordação'}</span>
+              <button class="btn-delete-item" onclick="deleteMyPhoto(event, ${p.id}, '${p.path}')" title="Remover minha foto">&times;</button>
+            </div>
+          </article>
+        `;
+      }).join('');
       if (countSpan) countSpan.innerText = photos.length;
-      initScrollReveal(); // Re-init for new items
+      initScrollReveal();
     } catch (e) {
       grid.innerHTML = `<p>A carregar memórias...</p>`;
     }
@@ -206,14 +216,21 @@ async function initGallery() {
         const public_url = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
 
         // 2. Insert to Table
-        await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}`, {
+        const inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
+            'Prefer': 'return=representation'
           },
           body: JSON.stringify({ path, title, public_url })
         });
+
+        // 3. Save ID to localStorage so user can delete it later
+        if (inserted && inserted[0]) {
+          const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
+          myIds.push(inserted[0].id);
+          localStorage.setItem('wedding_my_ids', JSON.stringify(myIds));
+        }
 
         status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
@@ -286,4 +303,38 @@ function initDaisyBackground() {
   }
 
   setInterval(createDaisy, 900);
+}
+
+/* --- SELF-DELETE UTILS --- */
+async function deleteMyPhoto(event, id, path) {
+  event.stopPropagation();
+  if (!confirm("Queres mesmo remover esta foto?")) return;
+
+  try {
+    // 1. Delete from Table
+    await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`, {
+      method: 'DELETE'
+    });
+
+    // 2. Delete from Storage
+    await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
+      method: 'DELETE',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    });
+
+    // 3. Remove from local list
+    const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
+    localStorage.setItem('wedding_my_ids', JSON.stringify(myIds.filter(i => i !== id)));
+
+    // 4. UI Feedback
+    const el = document.querySelector(`.gallery-item[data-id="${id}"]`);
+    if (el) el.remove();
+
+    const count = document.getElementById('photoCount');
+    if (count) count.innerText = parseInt(count.innerText) - 1;
+
+  } catch (err) {
+    console.error("Delete Error:", err);
+    alert("Erro ao remover. Tenta de novo.");
+  }
 }
