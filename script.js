@@ -207,9 +207,16 @@ async function initGallery() {
       if (!file) return (status.innerText = "Escolhe uma foto!");
       if (!author) return (status.innerText = "Diz-nos o teu nome!");
 
-      status.innerText = "A enviar...";
+      status.innerText = "A processar imagem...";
+
       try {
-        const path = `uploads/${Date.now()}-${file.name.replace(/[^\w.-]/g, '_')}`;
+        // --- CLIENT-SIDE PROCESSING ---
+        // Resize and convert to WebP to handle large iPhone images
+        const processedBlob = await processImage(file);
+
+        status.innerText = "A enviar...";
+        const fileName = `${Date.now()}.webp`;
+        const path = `uploads/${fileName}`;
 
         // 1. Upload to Storage
         const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
@@ -217,16 +224,12 @@ async function initGallery() {
           headers: {
             apikey: SUPABASE_ANON_KEY,
             Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': file.type
+            'Content-Type': 'image/webp'
           },
-          body: file
+          body: processedBlob
         });
 
-        if (!uploadRes.ok) {
-          const err = await uploadRes.text();
-          console.error("Storage Error:", err);
-          throw new Error("Upload failed");
-        }
+        if (!uploadRes.ok) throw new Error("Storage upload failed");
 
         const public_url = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
 
@@ -242,8 +245,7 @@ async function initGallery() {
             body: JSON.stringify({ path, title, public_url, author })
           });
         } catch (tableErr) {
-          console.warn("Retrying without author field...");
-          // Fallback if 'author' column doesn't exist yet
+          // Fallback if 'author' column missing
           inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
             method: 'POST',
             headers: {
@@ -264,21 +266,12 @@ async function initGallery() {
         status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
         form.reset();
-        const dropText = $('.drop-text', '#dropZone');
-        if (dropText) dropText.innerText = "Arrasta fotos ou clica aqui";
-
-        setTimeout(() => {
-          const openM = $('.modal.is-open');
-          if (openM) {
-            openM.classList.remove('is-open');
-            document.body.style.overflow = '';
-          }
-          load();
-        }, 1500);
+        load();
+        setTimeout(() => closeModal($('.modal.is-open')), 1500);
       } catch (err) {
-        console.error("Upload Catch:", err);
+        console.error("Upload Error:", err);
         status.style.color = "red";
-        status.innerText = "Erro ao enviar. Reduz o tamanho ou usa JPEG/PNG.";
+        status.innerText = "Erro ao enviar. Tenta outra foto.";
       }
     });
   }
@@ -398,4 +391,43 @@ async function deleteMyPhoto(id, path) {
     console.error("Delete Error:", err);
     alert("Erro ao remover. Tenta de novo.");
   }
+}
+
+/* --- IMAGE PROCESSING --- */
+async function processImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // Max dimension 1600px
+        const max = 1600;
+        if (width > max || height > max) {
+          if (width > height) {
+            height *= max / width;
+            width = max;
+          } else {
+            width *= max / height;
+            height = max;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob((blob) => {
+          resolve(blob);
+        }, 'image/webp', 0.8);
+      };
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
