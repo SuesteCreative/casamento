@@ -142,11 +142,15 @@ async function supabaseFetch(path, options = {}) {
     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
     ...options.headers
   };
-  if (!isGet) headers['Content-Type'] = 'application/json';
 
-  // Force cache bust to bypass Safari/iOS aggressive caching
-  const connector = path.includes('?') ? '&' : '?';
-  const url = isGet ? `${SUPABASE_URL}${path}${connector}cache_v=${Date.now()}` : `${SUPABASE_URL}${path}`;
+  if (isGet) {
+    headers['Cache-Control'] = 'no-cache';
+    headers['Pragma'] = 'no-cache';
+  } else {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  const url = `${SUPABASE_URL}${path}`;
 
   try {
     const response = await fetch(url, { ...options, headers });
