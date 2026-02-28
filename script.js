@@ -1,7 +1,7 @@
 /* script.js */
 
-const SUPABASE_URL = "COLOCA_AQUI_O_TEU_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "COLOCA_AQUI_O_TEU_SUPABASE_PUBLISHABLE_KEY";
+const SUPABASE_URL = "https://ofllnwwpyhhvyzuhwzzc.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_8iHaCkyT6RdrOF4Dcrf5VQ_ZLgr8zm6";
 const SUPABASE_BUCKET = "wedding-uploads";
 const SUPABASE_TABLE = "wedding_photos";
 
@@ -39,6 +39,34 @@ function closeModal(modal){
   document.body.style.overflow = "";
 }
 
+function isPlaceholder(v){
+  return !v || String(v).includes("COLOCA_AQUI");
+}
+
+function assertSupabaseConfig(){
+  const okUrl = SUPABASE_URL && /^https:\/\/.+\.supabase\.co\/?$/.test(SUPABASE_URL);
+  const okKey = SUPABASE_ANON_KEY && (SUPABASE_ANON_KEY.startsWith("sb_") || SUPABASE_ANON_KEY.length > 40);
+
+  if(isPlaceholder(SUPABASE_URL) || isPlaceholder(SUPABASE_ANON_KEY) || !okUrl || !okKey){
+    const msg = "Supabase não configurado. Confirma SUPABASE_URL (https://...supabase.co) e SUPABASE_ANON_KEY (sb_...).";
+    setStatus(msg, "error");
+    console.error(msg, { SUPABASE_URL, hasKey: !!SUPABASE_ANON_KEY });
+    return false;
+  }
+  return true;
+}
+
+function withTimeout(promise, ms, label){
+  let t;
+  const timeout = new Promise((_, reject)=>{
+    t = setTimeout(()=>{
+      reject(new Error(label || "Timeout"));
+    }, ms);
+  });
+  return Promise.race([promise, timeout]).finally(()=> clearTimeout(t));
+}
+
+/* UI stuff */
 function initReveal(){
   const sections = $all(".reveal-on");
   if(!sections.length) return;
@@ -66,6 +94,7 @@ function initImgSwap(){
 
   const toggle = ()=> wrap.classList.toggle("is-alt");
   wrap.addEventListener("click", toggle);
+
   wrap.addEventListener("keydown", (e)=>{
     if(e.key === "Enter" || e.key === " "){
       e.preventDefault();
@@ -190,23 +219,64 @@ function initAccommodationCarousel(){
 }
 
 /* Supabase helpers (sem dependências externas) */
+function joinPathKeepSlashes(path){
+  const parts = String(path || "").split("/").filter(Boolean);
+  return parts.map(p => encodeURIComponent(p)).join("/");
+}
+
 async function supabaseFetch(path, options = {}){
-  const url = `${SUPABASE_URL}${path}`;
+  if(!assertSupabaseConfig()) throw new Error("Supabase não configurado.");
+
+  const base = SUPABASE_URL.replace(/\/+$/, "");
+  const url = `${base}${path}`;
+
   const headers = {
     apikey: SUPABASE_ANON_KEY,
     Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     ...(options.headers || {})
   };
-  const res = await fetch(url, { ...options, headers });
-  const text = await res.text();
-  let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
 
-  if(!res.ok){
-    const msg = (data && data.message) ? data.message : `Erro (${res.status})`;
-    throw new Error(msg);
+  const fetchOpts = {
+    method: options.method || "GET",
+    headers,
+    body: options.body,
+    mode: "cors",
+    credentials: "omit",
+    cache: "no-store"
+  };
+
+  try{
+    const res = await withTimeout(fetch(url, fetchOpts), 20000, "Timeout a contactar Supabase");
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+
+    if(!res.ok){
+      const msg =
+        (data && typeof data === "object" && data.message) ? data.message :
+        (data && typeof data === "object" && data.error) ? data.error :
+        `Erro (${res.status})`;
+      const err = new Error(msg);
+      err._status = res.status;
+      err._data = data;
+      throw err;
+    }
+
+    return data;
+  }catch(err){
+    if(err && err.name === "TypeError" && String(err.message).toLowerCase().includes("failed to fetch")){
+      const hint = [
+        "Failed to fetch: normalmente é CORS, bloqueio de rede/adblock, URL do Supabase errada, ou Cloudflare a interferir.",
+        "Confirma em Supabase: API > CORS Allowed Origins inclui https://ocasamento.website e https://theyoungsailor.github.io",
+        "Confirma que SUPABASE_URL começa com https e que não tens http misturado.",
+        "Confirma que o bucket e policies permitem upload para anon."
+      ].join(" ");
+      console.error("Supabase fetch falhou", { url, hint, err });
+      throw new Error(hint);
+    }
+    console.error("Supabase fetch erro", { url, err });
+    throw err;
   }
-  return data;
 }
 
 function safeName(name){
@@ -220,18 +290,31 @@ function fileTooBig(file){
   return file.size > (MAX_FILE_MB * 1024 * 1024);
 }
 
+function normalizeContentType(file){
+  if(file && file.type) return file.type;
+  const n = (file && file.name) ? file.name.toLowerCase() : "";
+  if(n.endsWith(".png")) return "image/png";
+  if(n.endsWith(".webp")) return "image/webp";
+  if(n.endsWith(".heic")) return "image/heic";
+  if(n.endsWith(".heif")) return "image/heif";
+  return "image/jpeg";
+}
+
 async function uploadFileToBucket(file){
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-  const base = safeName(file.name.replace(/\.[^/.]+$/, ""));
+  const baseName = safeName(file.name.replace(/\.[^/.]+$/, ""));
   const stamp = Date.now();
-  const path = `uploads/${stamp}-${base}.${ext}`;
+  const path = `uploads/${stamp}-${baseName}.${ext}`;
 
-  const uploadPath = `/storage/v1/object/${encodeURIComponent(SUPABASE_BUCKET)}/${encodeURIComponent(path)}`;
+  const bucketEnc = encodeURIComponent(SUPABASE_BUCKET);
+  const pathEnc = joinPathKeepSlashes(path);
+
+  const uploadPath = `/storage/v1/object/${bucketEnc}/${pathEnc}`;
 
   await supabaseFetch(uploadPath, {
-    method: "POST",
+    method: "PUT",
     headers: {
-      "Content-Type": file.type || "application/octet-stream",
+      "Content-Type": normalizeContentType(file),
       "x-upsert": "false"
     },
     body: file
@@ -241,7 +324,9 @@ async function uploadFileToBucket(file){
 }
 
 function publicUrlFor(path){
-  return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
+  const base = SUPABASE_URL.replace(/\/+$/, "");
+  const pathEnc = joinPathKeepSlashes(path);
+  return `${base}/storage/v1/object/public/${SUPABASE_BUCKET}/${pathEnc}`;
 }
 
 async function insertPhotoRow({ path, title, public_url }){
@@ -271,6 +356,44 @@ async function fetchPhotos({ order = "latest" } = {}){
   return Array.isArray(data) ? data : [];
 }
 
+/* Lista ficheiros no bucket (fallback e sync opcional)
+   Nota: este endpoint depende de policies em storage.objects para anon.
+*/
+async function listBucketObjects(prefix = "uploads/"){
+  const bucketEnc = encodeURIComponent(SUPABASE_BUCKET);
+  const payload = { prefix, limit: 1000, offset: 0, sortBy: { column: "name", order: "desc" } };
+
+  const data = await supabaseFetch(`/storage/v1/object/list/${bucketEnc}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  if(!Array.isArray(data)) return [];
+  return data
+    .filter(o => o && o.name && !o.name.endsWith("/"))
+    .map(o => `${prefix}${o.name}`.replace(/\/+/g, "/"));
+}
+
+async function syncBucketToTableIfPossible(){
+  try{
+    const existing = await fetchPhotos({ order: "latest" });
+    const existingPaths = new Set(existing.map(x => x.path).filter(Boolean));
+
+    const objects = await listBucketObjects("uploads/");
+    const toInsert = objects.filter(p => !existingPaths.has(p)).slice(0, 50);
+
+    if(!toInsert.length) return;
+
+    for(const path of toInsert){
+      const publicUrl = publicUrlFor(path);
+      await insertPhotoRow({ path, title: null, public_url: publicUrl });
+    }
+  }catch(err){
+    console.warn("Sync bucket -> table falhou (normal se não houver permissão para listar).", err);
+  }
+}
+
 function renderGallery(items){
   const grid = $("#ugcGrid");
   const count = $("#ugcCount");
@@ -281,7 +404,7 @@ function renderGallery(items){
   count.textContent = String(items.length);
 
   items.forEach(item=>{
-    const url = item.public_url || publicUrlFor(item.path);
+    const url = item.public_url || (item.path ? publicUrlFor(item.path) : "");
     const title = item.title || "";
 
     let node;
@@ -436,7 +559,9 @@ function initUGC(){
   function validateFiles(files){
     const ok = [];
     for(const f of files){
-      if(!ACCEPTED_TYPES.includes(f.type)){
+      const type = f.type || normalizeContentType(f);
+
+      if(!ACCEPTED_TYPES.includes(type)){
         setStatus("Formato não suportado. Usa JPG, PNG, WEBP ou HEIC.", "error");
         continue;
       }
@@ -451,10 +576,31 @@ function initUGC(){
 
   async function refresh(){
     try{
-      const items = await fetchPhotos({ order: sortMode });
+      if(!assertSupabaseConfig()){
+        renderGallery([]);
+        return;
+      }
+
+      let items = await fetchPhotos({ order: sortMode });
+
+      if(items.length === 0){
+        await syncBucketToTableIfPossible();
+        items = await fetchPhotos({ order: sortMode });
+
+        if(items.length === 0){
+          try{
+            const objects = await listBucketObjects("uploads/");
+            items = objects.map(p => ({ path: p, title: "", public_url: publicUrlFor(p) }));
+          }catch(_){
+          }
+        }
+      }
+
       renderGallery(items);
+      setStatus("");
     }catch(err){
-      setStatus("Não foi possível carregar a galeria. Confirma a tabela e permissões.", "error");
+      setStatus("Não foi possível carregar a galeria. Confirma tabela, RLS, CORS e bucket.", "error");
+      console.error("Refresh galeria falhou", err);
     }
   }
 
@@ -462,6 +608,11 @@ function initUGC(){
     if(!selectedFiles.length){
       setStatus("Escolhe pelo menos uma imagem.", "error");
       setStep(1);
+      return;
+    }
+
+    if(!assertSupabaseConfig()){
+      setStatus("Supabase não configurado. Confirma as variáveis no script.js.", "error");
       return;
     }
 
@@ -488,9 +639,11 @@ function initUGC(){
       }, 650);
 
     }catch(err){
-      setStatus(`Erro no upload. ${err.message || ""}`.trim(), "error");
+      const msg = (err && err.message) ? err.message : "Erro no upload.";
+      setStatus(`Erro no upload. ${msg}`.trim(), "error");
       submitBtn.disabled = false;
       submitBtn.textContent = "Submeter";
+      console.error("Upload falhou", err);
     }
   }
 
@@ -600,4 +753,139 @@ document.addEventListener("DOMContentLoaded", ()=>{
   initQuintaModal();
   initAccommodationCarousel();
   initUGC();
+  initDaisyBackground();
 });
+
+function initDaisyBackground(){
+  const layer = document.getElementById("daisy-layer");
+  if(!layer) return;
+
+  const MAX_FLOWERS = 12;
+  const INTERVAL_MS = 650;
+
+  const MIN_SIZE = 30;
+  const MAX_SIZE = 84;
+
+  const MIN_LIFE = 1;
+  const MAX_LIFE = 5;
+
+  const MIN_SPIN = 1.2;
+  const MAX_SPIN = 3.4;
+
+  const MIN_OPACITY = 0.07;
+  const MAX_OPACITY = 0.16;
+
+  const DRIFT_RANGE = 60;
+  const SAFE_PADDING = 12;
+  const MAX_ATTEMPTS = 22;
+
+  const alive = [];
+
+  function rand(min, max){
+    return Math.random() * (max - min) + min;
+  }
+
+  function rectsOverlap(a, b){
+    return !(
+      a.x + a.w <= b.x ||
+      b.x + b.w <= a.x ||
+      a.y + a.h <= b.y ||
+      b.y + b.h <= a.y
+    );
+  }
+
+  function canPlace(candidate){
+    for(const r of alive){
+      if(rectsOverlap(candidate, r)) return false;
+    }
+    return true;
+  }
+
+  function tryCreate(){
+    if(layer.childElementCount >= MAX_FLOWERS) return;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const size = Math.round(rand(MIN_SIZE, MAX_SIZE));
+    const life = rand(MIN_LIFE, MAX_LIFE);
+    const spin = rand(MIN_SPIN, MAX_SPIN);
+    const opacity = rand(MIN_OPACITY, MAX_OPACITY);
+
+    const dir = Math.random() < 0.5 ? -1 : 1;
+    const startRot = `${Math.round(rand(0, 360))}deg`;
+
+    const dxVal = Math.round(rand(-DRIFT_RANGE, DRIFT_RANGE));
+    const dyVal = Math.round(rand(-DRIFT_RANGE, DRIFT_RANGE));
+
+    let placed = false;
+    let x = 0;
+    let y = 0;
+
+    for(let attempt = 0; attempt < MAX_ATTEMPTS; attempt++){
+      x = rand(0, Math.max(0, vw - size));
+      y = rand(0, Math.max(0, vh - size));
+
+      const candidate = {
+        x: x - SAFE_PADDING,
+        y: y - SAFE_PADDING,
+        w: size + SAFE_PADDING * 2,
+        h: size + SAFE_PADDING * 2
+      };
+
+      if(canPlace(candidate)){
+        alive.push(candidate);
+        placed = true;
+        break;
+      }
+    }
+
+    if(!placed) return;
+
+    const el = document.createElement("div");
+    el.className = "daisy";
+
+    el.style.setProperty("--size", `${size}px`);
+    el.style.setProperty("--life", `${life}s`);
+    el.style.setProperty("--spin", `${spin}s`);
+    el.style.setProperty("--opacity", `${opacity}`);
+    el.style.setProperty("--x", `${x}px`);
+    el.style.setProperty("--y", `${y}px`);
+    el.style.setProperty("--dx", `${dxVal}px`);
+    el.style.setProperty("--dy", `${dyVal}px`);
+    el.style.setProperty("--dir", String(dir));
+    el.style.setProperty("--start-rot", startRot);
+
+    layer.appendChild(el);
+
+    const removeAfter = Math.ceil(life * 1000) + 350;
+
+    setTimeout(()=>{
+      el.remove();
+
+      const targetX = x - SAFE_PADDING;
+      const targetY = y - SAFE_PADDING;
+      const targetW = size + SAFE_PADDING * 2;
+
+      const idx = alive.findIndex(r =>
+        r.x === targetX && r.y === targetY && r.w === targetW
+      );
+      if(idx >= 0) alive.splice(idx, 1);
+    }, removeAfter);
+  }
+
+  let timer = setInterval(tryCreate, INTERVAL_MS);
+
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.hidden){
+      clearInterval(timer);
+      timer = null;
+      layer.innerHTML = "";
+      alive.length = 0;
+    }else{
+      if(!timer) timer = setInterval(tryCreate, INTERVAL_MS);
+    }
+  });
+
+  tryCreate();
+}
