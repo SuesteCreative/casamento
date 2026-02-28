@@ -159,13 +159,13 @@ async function initGallery() {
     try {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
-      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=*&order=${order}`);
+      // Only fetch VISIBLE photos
+      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}`);
 
-      const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
       const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
 
       grid.innerHTML = photos
-        .filter(p => !deletedIds.includes(String(p.id))) // Hide locally deleted ones
+        .filter(p => !deletedIds.includes(String(p.id))) // Extra safety check local
         .map(p => {
           const title = p.title || 'Recordação';
           return `
@@ -242,7 +242,7 @@ async function initGallery() {
             'Content-Type': 'application/json',
             'Prefer': 'return=representation'
           },
-          body: JSON.stringify({ path, title, public_url, author })
+          body: JSON.stringify({ path, title, public_url, author, visibility: 'visible' })
         });
 
         // 3. Save ID to localStorage
@@ -377,19 +377,15 @@ async function deleteMyPhoto(id, path) {
   deletedIds.push(String(id));
   localStorage.setItem('wedding_deleted_ids', JSON.stringify(deletedIds));
 
-  // 3. Background Request to Supabase (Silent)
+  // 3. Update Supabase (Soft Delete)
   try {
-    // Delete from Table
     await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`, {
-      method: 'DELETE'
-    });
-    // Delete from Storage
-    await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
-      method: 'DELETE',
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visibility: 'hidden' })
     });
   } catch (err) {
-    console.warn("Background delete failed (likely permissions), but it's hidden for the user.", err);
+    console.warn("Supabase update failed, but item is hidden locally.", err);
   }
 }
 
