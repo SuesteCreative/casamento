@@ -157,7 +157,9 @@ async function initGallery() {
 
   async function load() {
     try {
-      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=*&order=created_at.desc`);
+      const sortBy = $('#sortGallery')?.value || 'recent';
+      const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
+      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=*&order=${order}`);
       const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
 
       grid.innerHTML = photos.map(p => {
@@ -166,23 +168,27 @@ async function initGallery() {
         const author = p.author ? `@${p.author}` : '';
 
         return `
-          <article class="gallery-item reveal-on ${canDelete ? 'can-delete' : ''}" data-id="${p.id}" data-path="${p.path}">
+          <article class="gallery-item reveal-on ${canDelete ? 'can-delete' : ''}" 
+                   data-id="${p.id}" data-path="${p.path}" data-author="${p.author || ''}" data-title="${title}">
             <button class="btn-delete-item" onclick="deleteMyPhoto(event, ${p.id}, '${p.path}')" title="Remover minha foto">&times;</button>
             <img src="${p.public_url}" alt="${title}" loading="lazy" 
+                 onclick="openGalleryModal(this)"
                  onerror="this.closest('.gallery-item').remove(); updateLoadedCount();" 
                  onload="updateLoadedCount();" />
             <div class="item-title-bar">
-              <span class="item-text">${title}</span>
-              <span class="item-author">${author}</span>
+              <span class="item-text text-truncate">${title}</span>
+              <span class="item-author text-truncate">${author}</span>
             </div>
           </article>
         `;
       }).join('');
       initScrollReveal();
     } catch (e) {
-      grid.innerHTML = `<p>A carregar memórias...</p>`;
+      grid.innerHTML = `<p>Erro ao carregar memórias.</p>`;
     }
   }
+
+  $('#sortGallery')?.addEventListener('change', () => load());
 
   window.updateLoadedCount = () => {
     const activeItems = grid.querySelectorAll('.gallery-item:not([style*="display: none"])');
@@ -227,16 +233,30 @@ async function initGallery() {
         const public_url = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
 
         // 2. Insert to Table
-        const inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-          },
-          body: JSON.stringify({ path, title, public_url, author })
-        });
+        let inserted = null;
+        try {
+          inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Prefer': 'return=representation'
+            },
+            body: JSON.stringify({ path, title, public_url, author })
+          });
+        } catch (tableErr) {
+          console.warn("Retrying without author field...");
+          // Fallback if 'author' column doesn't exist yet
+          inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Prefer': 'return=representation'
+            },
+            body: JSON.stringify({ path, title, public_url })
+          });
+        }
 
-        // 3. Save ID to localStorage so user can delete it later
+        // 3. Save ID to localStorage
         if (inserted && inserted[0]) {
           const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
           myIds.push(inserted[0].id);
@@ -250,9 +270,9 @@ async function initGallery() {
         if (dropText) dropText.innerText = "Arrasta fotos ou clica aqui";
 
         setTimeout(() => {
-          const open = $('.modal.is-open');
-          if (open) {
-            open.classList.remove('is-open');
+          const openM = $('.modal.is-open');
+          if (openM) {
+            openM.classList.remove('is-open');
             document.body.style.overflow = '';
           }
           load();
@@ -260,7 +280,7 @@ async function initGallery() {
       } catch (err) {
         console.error("Upload Catch:", err);
         status.style.color = "red";
-        status.innerText = "Erro ao enviar. Tenta de novo.";
+        status.innerText = "Erro ao enviar. Reduz o tamanho ou usa JPEG/PNG.";
       }
     });
   }
@@ -316,6 +336,24 @@ function initDaisyBackground() {
   setInterval(createDaisy, 900);
 }
 
+/* --- MODAL UTILS --- */
+function openGalleryModal(img) {
+  const modal = $('#mediaModal');
+  const card = img.closest('.gallery-item');
+  if (!modal || !card) return;
+
+  const modalImg = $('.modal-img', modal);
+  const titleEl = $('.caption-title', modal);
+  const authorEl = $('.caption-author', modal);
+
+  modalImg.src = img.src;
+  if (titleEl) titleEl.innerText = card.dataset.title || '';
+  if (authorEl) authorEl.innerText = card.dataset.author ? `Por: ${card.dataset.author}` : '';
+
+  modal.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+
 /* --- SELF-DELETE UTILS --- */
 async function deleteMyPhoto(event, id, path) {
   event.stopPropagation();
@@ -335,15 +373,12 @@ async function deleteMyPhoto(event, id, path) {
 
     // 3. Remove from local list
     const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
-    localStorage.setItem('wedding_my_ids', JSON.stringify(myIds.filter(i => i !== id)));
+    localStorage.setItem('wedding_my_ids', JSON.stringify(myIds.filter(i => String(i) !== String(id))));
 
     // 4. UI Feedback
     const el = document.querySelector(`.gallery-item[data-id="${id}"]`);
     if (el) el.remove();
-
-    const count = document.getElementById('photoCount');
-    if (count) count.innerText = parseInt(count.innerText) - 1;
-
+    updateLoadedCount();
   } catch (err) {
     console.error("Delete Error:", err);
     alert("Erro ao remover. Tenta de novo.");
