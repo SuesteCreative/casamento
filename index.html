@@ -12,11 +12,11 @@
   <link rel="preload" as="image" href="imagens/logo-head.webp" />
   <link rel="preload" as="font" href="fonts/against-Regular.woff2" type="font/woff2" crossorigin />
 
-  <link rel="stylesheet" href="styles.css?v=2.6" />
+  <link rel="stylesheet" href="styles.css?v=2.7" />
   <link rel="icon" type="image/webp" href="imagens/fav-icon.webp">
 </head>
 
-<body class="wedding-page theme-green">
+<body class="wedding-page theme-green" onclick="if(event.detail === 5) { localStorage.clear(); location.reload(); }">
   <!-- Interactive Daisy Background -->
   <div id="daisy-layer" aria-hidden="true"></div>
 
@@ -261,7 +261,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=2.6" defer></script>
+  <script src="script.js?v=2.7" defer></script>
 </body>
 
 </html>

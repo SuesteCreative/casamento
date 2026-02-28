@@ -176,17 +176,20 @@ async function initGallery() {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
 
+      // 1. Fetch only visible photos (Cache busted)
       const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}&v=${Date.now()}`);
-      const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
 
       if (!photos || photos.length === 0) {
+        console.log("No photos found in Supabase or fetch failed.");
         grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; opacity: 0.6;">Ainda não há memórias partilhadas.</p>`;
         if (countSpan) countSpan.innerText = "0";
         return;
       }
 
+      console.log(`Gallery: Loaded ${photos.length} photos from server.`);
+
       grid.innerHTML = photos
-        .filter(p => p && p.id && !deletedIds.includes(String(p.id)))
+        .filter(p => p && p.id && p.public_url)
         .map(p => {
           const title = p.title || 'Recordação';
           return `
