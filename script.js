@@ -1,7 +1,7 @@
 /* script.js */
 
 const SUPABASE_URL = "COLOCA_AQUI_O_TEU_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "COLOCA_AQUI_O_TEU_SUPABASE_ANON_KEY";
+const SUPABASE_ANON_KEY = "COLOCA_AQUI_O_TEU_SUPABASE_PUBLISHABLE_KEY";
 const SUPABASE_BUCKET = "wedding-uploads";
 const SUPABASE_TABLE = "wedding_photos";
 
@@ -150,21 +150,22 @@ function initQuintaModal(){
 
 function initAccommodationCarousel(){
   const section = $("#accommodation-section");
-  const carousel = $("#accCarousel");
-  if(!section || !carousel) return;
+  const track = $("#accCarousel");
+  if(!section || !track) return;
 
-  const slides = $all(".acc-slide", carousel);
+  const slides = $all(".acc-slide", track);
   const total = slides.length;
   if(!total) return;
 
   let index = 0;
+
   const goTo = (i)=>{
     index = (i + total) % total;
-    carousel.style.transform = `translateX(${(-index * 100)}%)`;
+    track.style.transform = `translateX(${(-index * 100)}%)`;
   };
 
-  const prevBtn = $(".acc-arrow-left", section);
-  const nextBtn = $(".acc-arrow-right", section);
+  const prevBtn = $("[data-acc-prev]", section) || $(".acc-arrow-left", section);
+  const nextBtn = $("[data-acc-next]", section) || $(".acc-arrow-right", section);
 
   if(prevBtn) prevBtn.addEventListener("click", ()=> goTo(index - 1));
   if(nextBtn) nextBtn.addEventListener("click", ()=> goTo(index + 1));
@@ -172,11 +173,11 @@ function initAccommodationCarousel(){
   let startX = null;
   const threshold = 40;
 
-  carousel.addEventListener("touchstart", (e)=>{
+  track.addEventListener("touchstart", (e)=>{
     if(e.touches && e.touches.length === 1) startX = e.touches[0].clientX;
   }, { passive:true });
 
-  carousel.addEventListener("touchend", (e)=>{
+  track.addEventListener("touchend", (e)=>{
     if(startX === null) return;
     const endX = e.changedTouches[0].clientX;
     const diff = endX - startX;
@@ -184,20 +185,23 @@ function initAccommodationCarousel(){
     else if(diff < -threshold) goTo(index + 1);
     startX = null;
   });
+
+  goTo(0);
 }
 
 /* Supabase helpers (sem dependências externas) */
 async function supabaseFetch(path, options = {}){
   const url = `${SUPABASE_URL}${path}`;
   const headers = {
-    "apikey": SUPABASE_ANON_KEY,
-    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     ...(options.headers || {})
   };
   const res = await fetch(url, { ...options, headers });
   const text = await res.text();
   let data = null;
   try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+
   if(!res.ok){
     const msg = (data && data.message) ? data.message : `Erro (${res.status})`;
     throw new Error(msg);
@@ -240,17 +244,18 @@ function publicUrlFor(path){
   return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
 }
 
-async function insertPhotoRow({ path, title }){
+async function insertPhotoRow({ path, title, public_url }){
   const body = [{
     path,
-    title: title || null
+    title: title || null,
+    public_url: public_url || null
   }];
 
   const data = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Prefer": "return=representation"
+      Prefer: "return=representation"
     },
     body: JSON.stringify(body)
   });
@@ -285,32 +290,39 @@ function renderGallery(items){
       const img = $(".ugc-card-img", node);
       const t = $(".ugc-card-title", node);
       const btn = $(".ugc-card-btn", node);
+
       if(img){
         img.src = url;
         img.alt = title || "Foto";
       }
-      if(t) t.textContent = title;
+      if(t) t.textContent = title || " ";
+
       if(btn){
         btn.addEventListener("click", ()=> openPreview(url, title));
       }
     }else{
       node = document.createElement("article");
       node.className = "ugc-card";
+
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "ugc-card-btn";
+
       const img = document.createElement("img");
       img.className = "ugc-card-img";
       img.loading = "lazy";
       img.decoding = "async";
       img.src = url;
       img.alt = title || "Foto";
+
       const span = document.createElement("span");
       span.className = "ugc-card-title";
-      span.textContent = title;
+      span.textContent = title || " ";
+
       btn.appendChild(img);
       btn.appendChild(span);
       btn.addEventListener("click", ()=> openPreview(url, title));
+
       node.appendChild(btn);
     }
 
@@ -318,7 +330,7 @@ function renderGallery(items){
   });
 }
 
-/* Preview modal (reutiliza o modal da Quinta para evitar duplicar CSS) */
+/* Preview modal (reutiliza o modal da Quinta) */
 function openPreview(url, title){
   const modal = $("#quintaModal");
   const img = modal ? $(".quinta-modal-img", modal) : null;
@@ -333,32 +345,91 @@ function initUGC(){
   const openBtn = $("[data-open-upload]");
   const modal = $("#ugcModal");
   const closeBtn = modal ? $(".ugc-modal-close", modal) : null;
+
   const drop = modal ? $("[data-dropzone]", modal) : null;
-  const fileInput = $("#ugcFile");
-  const sortBtn = $(".ugc-sort-btn");
+  const fileInput = modal ? $("#ugcFile") : null;
+
+  const panel1 = modal ? $("[data-ugc-step='1']", modal) : null;
+  const panel2 = modal ? $("[data-ugc-step='2']", modal) : null;
+
   const prevBtn = modal ? $("[data-prev]", modal) : null;
   const nextBtn = modal ? $("[data-next]", modal) : null;
 
-  if(!modal || !openBtn || !drop || !fileInput) return;
+  const titleInput = modal ? $("#ugcTitle") : null;
+  const submitBtn = modal ? $("[data-ugc-submit]", modal) : null;
+
+  const previewGrid = modal ? $("#ugcPreviewList") : null;
+
+  const sortBtn = $(".ugc-sort-btn");
+
+  if(!modal || !openBtn || !drop || !fileInput || !panel1 || !panel2 || !titleInput || !submitBtn) return;
 
   let sortMode = "latest";
   let selectedFiles = [];
+  let previewUrls = [];
   let step = 1;
+
+  const dots = $all(".ugc-step", modal);
 
   function setStep(n){
     step = n;
-    const steps = $all(".ugc-step", modal);
-    steps.forEach((s, i)=>{
-      s.classList.toggle("is-active", i === (step - 1));
+
+    dots.forEach((d, i)=> d.classList.toggle("is-active", i === (step - 1)));
+
+    panel1.classList.toggle("is-active", step === 1);
+    panel2.classList.toggle("is-active", step === 2);
+
+    if(prevBtn) prevBtn.disabled = step === 1;
+
+    if(nextBtn){
+      if(step === 1){
+        nextBtn.disabled = false;
+        nextBtn.textContent = "›";
+        nextBtn.setAttribute("aria-label", "Seguinte");
+      }else{
+        nextBtn.disabled = true;
+        nextBtn.textContent = "›";
+        nextBtn.setAttribute("aria-label", "Seguinte");
+      }
+    }
+  }
+
+  function clearPreviews(){
+    if(previewUrls.length){
+      previewUrls.forEach(u => URL.revokeObjectURL(u));
+    }
+    previewUrls = [];
+    if(previewGrid) previewGrid.innerHTML = "";
+  }
+
+  function renderPreviews(files){
+    clearPreviews();
+    if(!previewGrid) return;
+
+    files.forEach((file)=>{
+      const url = URL.createObjectURL(file);
+      previewUrls.push(url);
+
+      const wrap = document.createElement("div");
+      wrap.className = "ugc-preview-item";
+
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = file.name || "Pré-visualização";
+
+      wrap.appendChild(img);
+      previewGrid.appendChild(wrap);
     });
-    if(prevBtn) prevBtn.disabled = step <= 1;
-    if(nextBtn) nextBtn.disabled = step >= 2;
   }
 
   function resetFlow(){
     selectedFiles = [];
+    clearPreviews();
     fileInput.value = "";
+    titleInput.value = "";
     setStatus("");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submeter";
     setStep(1);
   }
 
@@ -366,7 +437,7 @@ function initUGC(){
     const ok = [];
     for(const f of files){
       if(!ACCEPTED_TYPES.includes(f.type)){
-        setStatus("Formato não suportado. Usa JPG, PNG ou WEBP.", "error");
+        setStatus("Formato não suportado. Usa JPG, PNG, WEBP ou HEIC.", "error");
         continue;
       }
       if(fileTooBig(f)){
@@ -387,21 +458,66 @@ function initUGC(){
     }
   }
 
+  async function doSubmit(){
+    if(!selectedFiles.length){
+      setStatus("Escolhe pelo menos uma imagem.", "error");
+      setStep(1);
+      return;
+    }
+
+    const title = (titleInput.value || "").trim();
+
+    setStatus("A enviar...", "");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "A enviar...";
+
+    try{
+      for(const file of selectedFiles){
+        const path = await uploadFileToBucket(file);
+        const publicUrl = publicUrlFor(path);
+        await insertPhotoRow({ path, title, public_url: publicUrl });
+      }
+
+      setStatus("Enviado com sucesso. A atualizar galeria...", "ok");
+      await refresh();
+
+      setTimeout(()=>{
+        closeModal(modal);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submeter";
+      }, 650);
+
+    }catch(err){
+      setStatus(`Erro no upload. ${err.message || ""}`.trim(), "error");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submeter";
+    }
+  }
+
   openBtn.addEventListener("click", ()=>{
     resetFlow();
     openModal(modal);
   });
 
   if(closeBtn){
-    closeBtn.addEventListener("click", ()=> closeModal(modal));
+    closeBtn.addEventListener("click", ()=>{
+      closeModal(modal);
+      clearPreviews();
+    });
   }
 
   modal.addEventListener("click", (e)=>{
-    if(e.target === modal) closeModal(modal);
+    if(e.target === modal){
+      closeModal(modal);
+      clearPreviews();
+    }
   });
 
   document.addEventListener("keydown", (e)=>{
-    if(e.key === "Escape" && modal.classList.contains("is-open")) closeModal(modal);
+    if(e.key === "Escape" && modal.classList.contains("is-open")){
+      closeModal(modal);
+      clearPreviews();
+    }
   });
 
   drop.addEventListener("dragover", (e)=>{
@@ -416,10 +532,13 @@ function initUGC(){
   drop.addEventListener("drop", (e)=>{
     e.preventDefault();
     drop.classList.remove("is-dragover");
-    const files = Array.from(e.dataTransfer.files || []);
+
+    const files = Array.from((e.dataTransfer && e.dataTransfer.files) ? e.dataTransfer.files : []);
     const ok = validateFiles(files);
+
     if(ok.length){
       selectedFiles = ok;
+      renderPreviews(ok);
       setStatus(`${ok.length} ficheiro(s) selecionado(s).`, "ok");
       setStep(2);
     }
@@ -428,8 +547,10 @@ function initUGC(){
   fileInput.addEventListener("change", ()=>{
     const files = Array.from(fileInput.files || []);
     const ok = validateFiles(files);
+
     if(ok.length){
       selectedFiles = ok;
+      renderPreviews(ok);
       setStatus(`${ok.length} ficheiro(s) selecionado(s).`, "ok");
       setStep(2);
     }
@@ -440,45 +561,30 @@ function initUGC(){
   }
 
   if(nextBtn){
-    nextBtn.addEventListener("click", async ()=>{
+    nextBtn.addEventListener("click", ()=>{
       if(step === 1){
-        setStep(2);
-        return;
-      }
-
-      if(!selectedFiles.length){
-        setStatus("Escolhe pelo menos uma imagem.", "error");
-        return;
-      }
-
-      setStatus("A enviar...", "");
-      nextBtn.disabled = true;
-
-      try{
-        for(const file of selectedFiles){
-          const path = await uploadFileToBucket(file);
-          const publicUrl = publicUrlFor(path);
-          await insertPhotoRow({ path, title: "" , public_url: publicUrl });
+        if(!selectedFiles.length){
+          setStatus("Escolhe pelo menos uma imagem.", "error");
+          return;
         }
-        setStatus("Enviado com sucesso. A atualizar galeria...", "ok");
-        await refresh();
-        setTimeout(()=>{
-          closeModal(modal);
-          nextBtn.disabled = false;
-        }, 650);
-      }catch(err){
-        setStatus(`Erro no upload. ${err.message || ""}`.trim(), "error");
-        nextBtn.disabled = false;
+        setStep(2);
       }
     });
   }
 
+  submitBtn.addEventListener("click", doSubmit);
+
   if(sortBtn){
+    const setSortLabel = ()=>{
+      const label = sortMode === "latest" ? "Mais recentes" : "Mais antigas";
+      sortBtn.textContent = label;
+    };
+
+    setSortLabel();
+
     sortBtn.addEventListener("click", async ()=>{
       sortMode = (sortMode === "latest") ? "oldest" : "latest";
-      sortBtn.setAttribute("data-sort", sortMode);
-      sortBtn.childNodes.forEach(()=>{});
-      sortBtn.firstChild.textContent = sortMode === "latest" ? "Latest " : "Oldest ";
+      setSortLabel();
       await refresh();
     });
   }
@@ -495,4 +601,3 @@ document.addEventListener("DOMContentLoaded", ()=>{
   initAccommodationCarousel();
   initUGC();
 });
-

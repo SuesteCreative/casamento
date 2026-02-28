@@ -1,0 +1,951 @@
+{% liquid
+  assign sid = section.id
+  assign s = section.settings
+
+  assign fallback_envelope_front = 'https://cdn.shopify.com/s/files/1/0818/0554/1723/files/envelope-front1.png?v=1769340601'
+  assign fallback_envelope_back  = 'https://cdn.shopify.com/s/files/1/0818/0554/1723/files/envelope-back-filled1.png?v=1769267591'
+
+  assign fallback_outer_front = 'https://cdn.shopify.com/s/files/1/0818/0554/1723/files/outer-front.png?v=1769338027'
+  assign fallback_inner_front = 'https://cdn.shopify.com/s/files/1/0818/0554/1723/files/inner-fron1.png?v=1769267589'
+  assign fallback_inner_back  = 'https://cdn.shopify.com/s/files/1/0818/0554/1723/files/inner-back1.png?v=1769267590'
+
+  assign fallback_restart_icon = 'https://cdn.shopify.com/s/files/1/0818/0554/1723/files/restart.png?v=1769338353'
+  assign fallback_arrow_icon   = 'https://cdn.shopify.com/s/files/1/0818/0554/1723/files/arrow.png?v=1769340866'
+
+  assign fallback_daisy = 'https://cdn.shopify.com/s/files/1/0818/0554/1723/files/daisy.png?v=1770052979'
+
+  assign envelope_front_src = fallback_envelope_front
+  if s.envelope_front != blank
+    assign envelope_front_src = s.envelope_front | image_url: width: 1800
+  endif
+
+  assign envelope_back_src = fallback_envelope_back
+  if s.envelope_back_filled != blank
+    assign envelope_back_src = s.envelope_back_filled | image_url: width: 1800
+  endif
+
+  assign invite_outer_src = fallback_outer_front
+  if s.invite_outer_front != blank
+    assign invite_outer_src = s.invite_outer_front | image_url: width: 1800
+  endif
+
+  assign invite_inner_front_src = fallback_inner_front
+  if s.invite_inner_front != blank
+    assign invite_inner_front_src = s.invite_inner_front | image_url: width: 1800
+  endif
+
+  assign invite_inner_back_src = fallback_inner_back
+  if s.invite_inner_back != blank
+    assign invite_inner_back_src = s.invite_inner_back | image_url: width: 1800
+  endif
+
+  assign restart_icon_src = fallback_restart_icon
+  if s.restart_icon != blank
+    assign restart_icon_src = s.restart_icon | image_url: width: 256
+  endif
+
+  assign arrow_icon_src = fallback_arrow_icon
+  if s.hint_arrow != blank
+    assign arrow_icon_src = s.hint_arrow | image_url: width: 512
+  endif
+
+  assign details_url = s.details_url
+  if details_url == blank
+    assign details_url = 'https://desportosnauticosalvor.com/pages/casamento'
+  endif
+
+  assign env_f_w = 1200
+  assign env_f_h = 1200
+  if s.envelope_front != blank
+    assign env_f_w = s.envelope_front.width
+    assign env_f_h = s.envelope_front.height
+  endif
+
+  assign env_b_w = 1200
+  assign env_b_h = 1200
+  if s.envelope_back_filled != blank
+    assign env_b_w = s.envelope_back_filled.width
+    assign env_b_h = s.envelope_back_filled.height
+  endif
+
+  assign out_w = 1200
+  assign out_h = 1100
+  if s.invite_outer_front != blank
+    assign out_w = s.invite_outer_front.width
+    assign out_h = s.invite_outer_front.height
+  endif
+
+  assign in_f_w = 1200
+  assign in_f_h = 1600
+  if s.invite_inner_front != blank
+    assign in_f_w = s.invite_inner_front.width
+    assign in_f_h = s.invite_inner_front.height
+  endif
+
+  assign in_b_w = 1200
+  assign in_b_h = 1600
+  if s.invite_inner_back != blank
+    assign in_b_w = s.invite_inner_back.width
+    assign in_b_h = s.invite_inner_back.height
+  endif
+
+  assign r_w = 256
+  assign r_h = 256
+  if s.restart_icon != blank
+    assign r_w = s.restart_icon.width
+    assign r_h = s.restart_icon.height
+  endif
+
+  assign a_w = 512
+  assign a_h = 512
+  if s.hint_arrow != blank
+    assign a_w = s.hint_arrow.width
+    assign a_h = s.hint_arrow.height
+  endif
+%}
+
+<section
+  id="interactive-invite-{{ sid }}"
+  class="ii"
+  data-state="front"
+  data-details-url="{{ details_url | escape }}"
+  style="
+    --ii-max-w: {{ s.max_width | default: 520 }}px;
+    --ii-invite-scale: 0.92;
+    --ii-invite-scale-mobile: 0.90;
+    --ii-reveal-delay: 560ms;
+    --ii-btn-bg: {{ s.button_bg | default: '#8FA394' }};
+    --ii-btn-bg-hover: {{ s.button_bg_hover | default: '#7E9686' }};
+    --ii-btn-text: {{ s.button_text | default: '#FFFFFF' }};
+    --ii-btn-disabled-bg: {{ s.button_disabled_bg | default: '#C9CEC9' }};
+    --ii-btn-disabled-text: {{ s.button_disabled_text | default: '#FFFFFF' }};
+    --ii-shadow: 0 22px 60px rgba(0,0,0,0.12);
+    --ii-shadow-soft: 0 14px 34px rgba(0,0,0,0.12);
+    --ii-shadow-layer: 0 18px 46px rgba(0,0,0,0.12);
+    --ii-radius: 999px;
+    --ii-daisy-min: 44px;
+    --ii-daisy-max: 110px;
+  "
+>
+  <div class="ii__daisies" aria-hidden="true">
+    <span class="ii__daisy" style="--x: 6%;  --y: 18%; --s: 58px; --r: -18deg;"></span>
+    <span class="ii__daisy" style="--x: 14%; --y: 72%; --s: 86px; --r: 22deg;"></span>
+    <span class="ii__daisy" style="--x: 22%; --y: 40%; --s: 52px; --r: 10deg;"></span>
+
+    <span class="ii__daisy" style="--x: 78%; --y: 16%; --s: 74px; --r: 14deg;"></span>
+    <span class="ii__daisy" style="--x: 88%; --y: 46%; --s: 98px; --r: -8deg;"></span>
+    <span class="ii__daisy" style="--x: 84%; --y: 78%; --s: 60px; --r: 28deg;"></span>
+
+    <span class="ii__daisy" style="--x: 50%; --y: 10%; --s: 64px; --r: -26deg;"></span>
+    <span class="ii__daisy" style="--x: 52%; --y: 90%; --s: 92px; --r: 12deg;"></span>
+
+    <span class="ii__daisy" style="--x: 34%; --y: 86%; --s: 48px; --r: -6deg;"></span>
+    <span class="ii__daisy" style="--x: 66%; --y: 60%; --s: 54px; --r: 18deg;"></span>
+  </div>
+
+  <div class="ii__wrap">
+    <div class="ii__stage" aria-live="polite">
+      <div class="ii__stage-inner">
+
+        <div class="ii__envelope" aria-label="Envelope animation">
+          <div class="ii__flip" data-envelope-flip>
+            <div class="ii__flip-face ii__flip-front">
+              <img class="ii__img ii__img--envelope" src="{{ envelope_front_src }}" alt="{{ s.alt_envelope_front | default: 'Envelope front' | escape }}" loading="eager" width="{{ env_f_w }}" height="{{ env_f_h }}">
+            </div>
+            <div class="ii__flip-face ii__flip-back">
+              <img class="ii__img ii__img--envelope" src="{{ envelope_back_src }}" alt="{{ s.alt_envelope_back | default: 'Envelope back' | escape }}" loading="eager" width="{{ env_b_w }}" height="{{ env_b_h }}">
+            </div>
+          </div>
+
+          <img class="ii__piece" src="{{ envelope_piece_src }}" alt="" aria-hidden="true" loading="lazy" width="{{ env_p_w }}" height="{{ env_p_h }}">
+        </div>
+
+        <div class="ii__invite" aria-label="Invitation reveal">
+          <div class="ii__invite-inner" data-invite-root>
+            <div class="ii__hint ii__hint--drag" data-hint-drag aria-hidden="true">
+              <img class="ii__hint-arrow ii__hint-arrow--drag" src="{{ arrow_icon_src }}" alt="" aria-hidden="true" loading="lazy" width="{{ a_w }}" height="{{ a_h }}">
+              <div class="ii__hint-text">Mexe-me</div>
+            </div>
+
+            <div class="ii__hint ii__hint--tap" data-hint-tap aria-hidden="true">
+              <img class="ii__hint-arrow ii__hint-arrow--tap" src="{{ arrow_icon_src }}" alt="" aria-hidden="true" loading="lazy" width="{{ a_w }}" height="{{ a_h }}">
+              <div class="ii__hint-text">Carrega aqui</div>
+            </div>
+
+            <div class="ii__invite-layer ii__invite-outer" data-draggable="outer" role="group" aria-label="Invitation outer layer">
+              <img class="ii__img ii__img--outer" src="{{ invite_outer_src }}" alt="{{ s.alt_outer | default: 'Invitation outer' | escape }}" loading="eager" width="{{ out_w }}" height="{{ out_h }}">
+            </div>
+
+            <div class="ii__invite-layer ii__invite-innercard" data-draggable="inner" role="group" aria-label="Invitation inner layer">
+              <div class="ii__card" data-inner-card>
+                <div class="ii__card-face ii__card-front">
+                  <img class="ii__img ii__img--inner" src="{{ invite_inner_front_src }}" alt="{{ s.alt_inner_front | default: 'Invitation inner front' | escape }}" loading="eager" width="{{ in_f_w }}" height="{{ in_f_h }}">
+                </div>
+                <div class="ii__card-face ii__card-back">
+                  <img class="ii__img ii__img--inner" src="{{ invite_inner_back_src }}" alt="{{ s.alt_inner_back | default: 'Invitation inner back' | escape }}" loading="eager" width="{{ in_b_w }}" height="{{ in_b_h }}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ii__controls" aria-label="Invitation controls">
+      <button type="button" class="ii__btn" data-main-btn><span class="ii__btn-label">Virar</span></button>
+
+      <button type="button" class="ii__restart" data-restart-btn aria-label="Restart" hidden>
+        <img class="ii__restart-icon" src="{{ restart_icon_src }}" alt="" aria-hidden="true" loading="lazy" width="{{ r_w }}" height="{{ r_h }}">
+      </button>
+    </div>
+  </div>
+
+  <style>
+    #interactive-invite-{{ sid }}.ii{
+      width:100%;
+      background: {{ s.background | default: '#FFFFFF' }};
+      padding: clamp(28px,4vw,52px) 0;
+      overflow:hidden;
+      position:relative;
+    }
+
+    #interactive-invite-{{ sid }} .ii__daisies{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      user-select:none;
+      overflow:hidden;
+      z-index:1;
+    }
+    #interactive-invite-{{ sid }} .ii__daisy{
+      position:absolute;
+      left: var(--x);
+      top: var(--y);
+      width: clamp(var(--ii-daisy-min), var(--s), var(--ii-daisy-max));
+      aspect-ratio: 1 / 1;
+      transform: translate(-50%,-50%) rotate(var(--r));
+      opacity: 0.95;
+      background-image: url("{{ fallback_daisy }}");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,0.10));
+    }
+
+    #interactive-invite-{{ sid }} .ii__wrap{
+      width:min(1200px,100%);
+      margin:0 auto;
+      padding:0 20px;
+      min-height: min(860px, 100vh);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap: clamp(18px,3vw,26px);
+      position:relative;
+      z-index:2;
+    }
+    #interactive-invite-{{ sid }} .ii__stage{
+      width:100%;
+      flex: 1 1 auto;
+      min-height: clamp(420px,58vh,680px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+    }
+    #interactive-invite-{{ sid }} .ii__stage-inner{
+      width: min(var(--ii-max-w), 92vw);
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transform: translateZ(0);
+    }
+
+    #interactive-invite-{{ sid }} .ii__img{
+      display:block;
+      width:100%;
+      height:auto;
+      user-select:none;
+      -webkit-user-drag:none;
+      pointer-events:none;
+    }
+
+    #interactive-invite-{{ sid }} .ii__envelope{
+      width:100%;
+      position:relative;
+      filter: drop-shadow(var(--ii-shadow));
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+      z-index: 6;
+      transform: translateZ(0);
+    }
+    #interactive-invite-{{ sid }} .ii__flip{
+      width:100%;
+      position:relative;
+      aspect-ratio: 1 / 1;
+      transform-style:preserve-3d;
+      transition: transform 700ms cubic-bezier(.2,.8,.2,1);
+    }
+    #interactive-invite-{{ sid }} .ii__flip-face{
+      position:absolute;
+      inset:0;
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
+    }
+    #interactive-invite-{{ sid }} .ii__flip-back{ transform: rotateY(180deg); }
+    #interactive-invite-{{ sid }} .ii__envelope.is-flipped .ii__flip{ transform: rotateY(180deg); }
+
+    #interactive-invite-{{ sid }} .ii__piece{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:auto;
+      opacity:0;
+      pointer-events:none;
+      filter: drop-shadow(var(--ii-shadow-soft));
+      transition: opacity 220ms ease;
+    }
+    #interactive-invite-{{ sid }}[data-state="back"] .ii__piece{ opacity: 1; }
+    #interactive-invite-{{ sid }}[data-state="opening"] .ii__piece{ opacity: 0; }
+
+    #interactive-invite-{{ sid }}[data-state="opening"] .ii__envelope{
+      animation: iiEnvelopeExit 1400ms cubic-bezier(.2,.8,.2,1) forwards;
+      pointer-events:none;
+    }
+    #interactive-invite-{{ sid }}[data-state="opening"] .ii__envelope.ii__envelope--behind{ z-index: 1; }
+
+    @keyframes iiEnvelopeExit{
+      0%   { transform: translateX(0) rotate(0deg); opacity: 1; }
+      38%  { transform: translateX(0) rotate(90deg); opacity: 1; }
+      100% { transform: translateX(-46vw) rotate(90deg); opacity: 0; }
+    }
+
+    #interactive-invite-{{ sid }} .ii__invite{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none;
+      z-index: 3;
+    }
+    #interactive-invite-{{ sid }} .ii__invite-inner{
+      width: min(var(--ii-max-w), 92vw);
+      position:relative;
+      opacity:0;
+      transform: scale(0.92) translateZ(0);
+      pointer-events:none;
+      transition: opacity 520ms ease, transform 520ms cubic-bezier(.2,.8,.2,1);
+      will-change: opacity, transform;
+      z-index: 4;
+    }
+
+    #interactive-invite-{{ sid }}[data-state="opening"] .ii__invite-inner{
+      opacity:1;
+      transform: scale(var(--ii-invite-scale));
+      pointer-events:auto;
+      transition-delay: var(--ii-reveal-delay);
+    }
+    #interactive-invite-{{ sid }}[data-state="revealed"] .ii__invite-inner,
+    #interactive-invite-{{ sid }}[data-state="ready"] .ii__invite-inner{
+      opacity:1;
+      transform: scale(var(--ii-invite-scale));
+      pointer-events:auto;
+      transition-delay: 0ms;
+    }
+
+    #interactive-invite-{{ sid }} .ii__invite-layer{
+      position:absolute;
+      left:0;
+      bottom:0;
+      width:100%;
+      touch-action:none;
+      will-change: transform;
+    }
+    #interactive-invite-{{ sid }} .ii__invite-outer{
+      z-index: 4;
+      pointer-events:auto;
+      filter: drop-shadow(var(--ii-shadow-layer));
+    }
+    #interactive-invite-{{ sid }} .ii__invite-innercard{
+      position:relative;
+      width:100%;
+      bottom:0;
+      left:0;
+      z-index: 3;
+      pointer-events:auto;
+      filter: drop-shadow(var(--ii-shadow-layer));
+    }
+
+    #interactive-invite-{{ sid }} .ii__card{
+      width:100%;
+      position:relative;
+      transform-style:preserve-3d;
+      transition: transform 720ms cubic-bezier(.2,.8,.2,1);
+    }
+    #interactive-invite-{{ sid }} .ii__card-face{
+      position:absolute;
+      inset:0;
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
+    }
+    #interactive-invite-{{ sid }} .ii__card-front{ position:relative; }
+    #interactive-invite-{{ sid }} .ii__card-back{ transform: rotateY(180deg); }
+    #interactive-invite-{{ sid }} .ii__invite-innercard.is-flipped .ii__card{ transform: rotateY(180deg); }
+
+    #interactive-invite-{{ sid }} .ii__hint{
+      position:absolute;
+      z-index: 6;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      opacity:0;
+      transform: translateY(8px) scale(0.98);
+      pointer-events:none;
+      transition: opacity 220ms ease, transform 220ms ease;
+      left: calc(100% + 10px);
+    }
+    #interactive-invite-{{ sid }}[data-state="ready"] .ii__hint{
+      opacity:1;
+      transform: translateY(0) scale(1);
+    }
+    #interactive-invite-{{ sid }} .ii__hint.is-hidden{
+      opacity:0 !important;
+      transform: translateY(10px) scale(0.98) !important;
+    }
+    #interactive-invite-{{ sid }} .ii__hint-arrow{
+      width: clamp(40px,5.2vw,58px);
+      height:auto;
+      display:block;
+      animation: iiPulse 1.2s ease-in-out infinite;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.10));
+    }
+    #interactive-invite-{{ sid }} .ii__hint-arrow--drag{
+      transform: scaleY(-1);
+      animation: iiPulseDrag 1.2s ease-in-out infinite;
+    }
+    #interactive-invite-{{ sid }} .ii__hint-text{
+      font-family: var(--font-body-family, Arial);
+      font-size: clamp(18px,2.2vw,28px);
+      font-weight: 500;
+      color: rgba(0,0,0,0.85);
+      animation: iiFloat 1.2s ease-in-out infinite;
+      white-space: nowrap;
+    }
+
+    #interactive-invite-{{ sid }} .ii__hint--tap{ top: 22%; }
+    #interactive-invite-{{ sid }} .ii__hint--drag{ top: 50%; }
+
+    @keyframes iiPulse{
+      0%{ transform: scale(1); opacity: 0.85; }
+      50%{ transform: scale(1.06); opacity: 1; }
+      100%{ transform: scale(1); opacity: 0.85; }
+    }
+    @keyframes iiPulseDrag{
+      0%{ transform: scaleY(-1) scale(1); opacity: 0.85; }
+      50%{ transform: scaleY(-1) scale(1.06); opacity: 1; }
+      100%{ transform: scaleY(-1) scale(1); opacity: 0.85; }
+    }
+    @keyframes iiFloat{
+      0%{ transform: translateY(0); }
+      50%{ transform: translateY(-2px); }
+      100%{ transform: translateY(0); }
+    }
+
+    #interactive-invite-{{ sid }} .ii__controls{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap: 14px;
+      padding-bottom: clamp(16px,3vh,34px);
+    }
+    #interactive-invite-{{ sid }} .ii__btn{
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      background: var(--ii-btn-bg);
+      color: var(--ii-btn-text);
+      border-radius: var(--ii-radius);
+      padding: 12px 30px;
+      min-width: min(340px, 84vw);
+      font-size: clamp(16px,2vw,22px);
+      line-height:1;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+      box-shadow: 0 18px 44px rgba(0,0,0,0.10);
+      transition: transform 160ms ease, background 160ms ease, opacity 160ms ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #interactive-invite-{{ sid }} .ii__btn:hover{ background: var(--ii-btn-bg-hover); transform: translateY(-1px); }
+    #interactive-invite-{{ sid }} .ii__btn:active{ transform: translateY(0); opacity: 0.96; }
+    #interactive-invite-{{ sid }} .ii__btn.is-disabled,
+    #interactive-invite-{{ sid }} .ii__btn:disabled{
+      cursor:not-allowed;
+      background: var(--ii-btn-disabled-bg);
+      color: var(--ii-btn-disabled-text);
+      opacity: 0.92;
+      transform: none;
+    }
+
+    #interactive-invite-{{ sid }} .ii__restart{
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      background: transparent;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.10);
+      transition: transform 160ms ease, opacity 160ms ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #interactive-invite-{{ sid }} .ii__restart:hover{ transform: translateY(-1px); }
+    #interactive-invite-{{ sid }} .ii__restart:active{ transform: translateY(0); opacity: 0.96; }
+    #interactive-invite-{{ sid }} .ii__restart-icon{
+      width: 34px;
+      height: 34px;
+      display:block;
+      pointer-events:none;
+      user-select:none;
+      -webkit-user-drag:none;
+      opacity: 0.92;
+    }
+
+    #interactive-invite-{{ sid }}[data-state="front"] .ii__invite-inner,
+    #interactive-invite-{{ sid }}[data-state="back"] .ii__invite-inner{
+      opacity:0;
+      transform: scale(0.92);
+      pointer-events:none;
+      transition-delay: 0ms;
+    }
+
+    #interactive-invite-{{ sid }} .ii__debug-hide{ display:none !important; }
+
+    @media (max-width: 740px){
+      #interactive-invite-{{ sid }} .ii__daisy{
+        width: clamp(34px, calc(clamp(var(--ii-daisy-min), var(--s), var(--ii-daisy-max)) * 0.78), 86px);
+        opacity: 0.90;
+      }
+    }
+
+    @media (max-width: 520px){
+      #interactive-invite-{{ sid }} .ii__hint{
+        left: 50%;
+        transform: translateX(-50%) translateY(8px) scale(0.98);
+        gap: 8px;
+      }
+      #interactive-invite-{{ sid }}[data-state="ready"] .ii__hint{
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      #interactive-invite-{{ sid }} .ii__hint--tap{
+        top: 8%;
+      }
+      #interactive-invite-{{ sid }} .ii__hint--drag{
+        top: 34%;
+      }
+      #interactive-invite-{{ sid }} .ii__hint-arrow{
+        width: 44px;
+      }
+      #interactive-invite-{{ sid }} .ii__hint-text{
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 740px){
+      #interactive-invite-{{ sid }} .ii__wrap{ padding: 0 16px; }
+      #interactive-invite-{{ sid }} .ii__stage{ min-height: clamp(380px,56vh,620px); }
+      #interactive-invite-{{ sid }} .ii__btn{ min-width: min(320px, 90vw); }
+
+      #interactive-invite-{{ sid }}[data-state="opening"] .ii__invite-inner,
+      #interactive-invite-{{ sid }}[data-state="revealed"] .ii__invite-inner,
+      #interactive-invite-{{ sid }}[data-state="ready"] .ii__invite-inner{
+        transform: scale(var(--ii-invite-scale-mobile));
+      }
+
+      @keyframes iiEnvelopeExit{
+        0%   { transform: translateX(0) rotate(0deg); opacity: 1; }
+        40%  { transform: translateX(0) rotate(90deg); opacity: 1; }
+        100% { transform: translateX(-60vw) rotate(90deg); opacity: 0; }
+      }
+    }
+  </style>
+
+  <script>
+    (function(){
+      var root = document.getElementById('interactive-invite-{{ sid }}');
+      if(!root) return;
+
+      var detailsUrl = root.getAttribute('data-details-url') || '';
+      var mainBtn = root.querySelector('[data-main-btn]');
+      var mainLabel = root.querySelector('.ii__btn-label');
+      var restartBtn = root.querySelector('[data-restart-btn]');
+
+      var envelopeWrap = root.querySelector('.ii__envelope');
+      var outerLayer = root.querySelector('[data-draggable="outer"]');
+      var innerLayer = root.querySelector('[data-draggable="inner"]');
+
+      var hintDrag = root.querySelector('[data-hint-drag]');
+      var hintTap = root.querySelector('[data-hint-tap]');
+
+      var state = 'front';
+      var countdownTimer = null;
+      var countdownLeft = 0;
+
+      var keyDrag = 'ii_' + '{{ sid }}' + '_hint_drag_done';
+      var keyTap  = 'ii_' + '{{ sid }}' + '_hint_tap_done';
+
+      var openTimers = [];
+
+      function clearOpenTimers(){
+        while(openTimers.length){
+          clearTimeout(openTimers.pop());
+        }
+      }
+
+      function setState(next){
+        state = next;
+        root.setAttribute('data-state', next);
+        if(next === 'ready') applyHintVisibility();
+      }
+
+      function setButton(label, disabled){
+        mainLabel.textContent = label;
+        if(disabled){
+          mainBtn.classList.add('is-disabled');
+          mainBtn.setAttribute('disabled','disabled');
+        }else{
+          mainBtn.classList.remove('is-disabled');
+          mainBtn.removeAttribute('disabled');
+        }
+      }
+
+      function clearCountdown(){
+        if(countdownTimer){
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+      }
+
+      function startCountdown(seconds){
+        clearCountdown();
+        countdownLeft = seconds;
+        setButton('Detalhes (' + countdownLeft + ')', true);
+
+        countdownTimer = setInterval(function(){
+          countdownLeft -= 1;
+          if(countdownLeft <= 0){
+            clearCountdown();
+            setButton('Detalhes', false);
+            return;
+          }
+          setButton('Detalhes (' + countdownLeft + ')', true);
+        }, 1000);
+      }
+
+      function resetTransforms(){
+        [outerLayer, innerLayer].forEach(function(el){
+          if(!el) return;
+          el.style.transform = '';
+          el.dataset.tx = '0';
+          el.dataset.ty = '0';
+        });
+        if(innerLayer) innerLayer.classList.remove('is-flipped');
+      }
+
+      function applyHintVisibility(forceShow){
+        if(!hintDrag || !hintTap) return;
+
+        if(forceShow){
+          hintDrag.classList.remove('is-hidden');
+          hintTap.classList.remove('is-hidden');
+          return;
+        }
+
+        var dragDone = false;
+        var tapDone = false;
+        try{
+          dragDone = localStorage.getItem(keyDrag) === '1';
+          tapDone  = localStorage.getItem(keyTap) === '1';
+        }catch(e){}
+        hintDrag.classList.toggle('is-hidden', dragDone);
+        hintTap.classList.toggle('is-hidden', tapDone);
+      }
+
+      function markDragDone(){
+        if(!hintDrag) return;
+        hintDrag.classList.add('is-hidden');
+        try{ localStorage.setItem(keyDrag, '1'); }catch(e){}
+      }
+
+      function markTapDone(){
+        if(!hintTap) return;
+        hintTap.classList.add('is-hidden');
+        try{ localStorage.setItem(keyTap, '1'); }catch(e){}
+      }
+
+      function resetHintsOnRestart(){
+        try{
+          localStorage.removeItem(keyDrag);
+          localStorage.removeItem(keyTap);
+        }catch(e){}
+        applyHintVisibility(true);
+      }
+
+      function preload(urls){
+        urls.forEach(function(u){
+          if(!u) return;
+          var img = new Image();
+          img.src = u;
+        });
+      }
+
+      preload([
+        '{{ envelope_front_src }}',
+        '{{ envelope_back_src }}',
+        '{{ envelope_piece_src }}',
+        '{{ invite_outer_src }}',
+        '{{ invite_inner_front_src }}',
+        '{{ invite_inner_back_src }}',
+        '{{ restart_icon_src }}',
+        '{{ arrow_icon_src }}'
+      ]);
+
+      function goFront(){
+        clearOpenTimers();
+        clearCountdown();
+
+        setState('front');
+
+        envelopeWrap.classList.remove('is-flipped');
+        envelopeWrap.classList.remove('ii__debug-hide');
+        envelopeWrap.classList.remove('ii__envelope--behind');
+
+        envelopeWrap.style.animation = 'none';
+        envelopeWrap.offsetHeight;
+        envelopeWrap.style.animation = '';
+
+        resetTransforms();
+        resetHintsOnRestart();
+
+        setButton('Virar', false);
+        if(restartBtn) restartBtn.hidden = true;
+      }
+
+      function goBack(){
+        setState('back');
+        envelopeWrap.classList.add('is-flipped');
+        setButton('Abrir', false);
+        if(restartBtn) restartBtn.hidden = true;
+      }
+
+      function openEnvelope(){
+        clearOpenTimers();
+        setState('opening');
+        if(restartBtn) restartBtn.hidden = false;
+
+        startCountdown(10);
+
+        envelopeWrap.classList.remove('ii__debug-hide');
+        envelopeWrap.classList.remove('ii__envelope--behind');
+
+        envelopeWrap.style.animation = 'none';
+        envelopeWrap.offsetHeight;
+        envelopeWrap.style.animation = '';
+
+        openTimers.push(setTimeout(function(){
+          envelopeWrap.classList.add('ii__envelope--behind');
+        }, 560));
+
+        openTimers.push(setTimeout(function(){
+          setState('revealed');
+        }, 720));
+
+        openTimers.push(setTimeout(function(){
+          envelopeWrap.classList.add('ii__debug-hide');
+          envelopeWrap.classList.remove('ii__envelope--behind');
+          setState('ready');
+        }, 1500));
+      }
+
+      function goDetails(){
+        if(!detailsUrl) return;
+        window.location.href = detailsUrl;
+      }
+
+      mainBtn.addEventListener('click', function(){
+        if(mainBtn.hasAttribute('disabled')) return;
+
+        if(state === 'front'){
+          goBack();
+          return;
+        }
+        if(state === 'back'){
+          openEnvelope();
+          return;
+        }
+        if(state === 'ready'){
+          goDetails();
+          return;
+        }
+      });
+
+      if(restartBtn){
+        restartBtn.addEventListener('click', function(){
+          goFront();
+        });
+      }
+
+      var DRAG_THRESHOLD = 5;
+
+      function makeDraggable(el, opts){
+        if(!el) return;
+        var allowTapFlip = !!(opts && opts.allowTapFlip);
+        var onTapFlip = (opts && opts.onTapFlip) ? opts.onTapFlip : function(){};
+        var onFirstDrag = (opts && opts.onFirstDrag) ? opts.onFirstDrag : function(){};
+        var onFirstTap = (opts && opts.onFirstTap) ? opts.onFirstTap : function(){};
+
+        el.dataset.tx = el.dataset.tx || '0';
+        el.dataset.ty = el.dataset.ty || '0';
+
+        var pointerId = null;
+        var startX = 0, startY = 0;
+        var baseX = 0, baseY = 0;
+        var isDown = false;
+        var isDragging = false;
+        var dragNotified = false;
+
+        function applyTransform(x, y){
+          el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+          el.dataset.tx = String(x);
+          el.dataset.ty = String(y);
+        }
+
+        el.addEventListener('pointerdown', function(e){
+          if(state !== 'ready' && state !== 'revealed') return;
+
+          pointerId = e.pointerId;
+          isDown = true;
+          isDragging = false;
+
+          startX = e.clientX;
+          startY = e.clientY;
+
+          baseX = parseFloat(el.dataset.tx || '0') || 0;
+          baseY = parseFloat(el.dataset.ty || '0') || 0;
+
+          el.setPointerCapture(pointerId);
+        });
+
+        el.addEventListener('pointermove', function(e){
+          if(!isDown) return;
+          if(e.pointerId !== pointerId) return;
+
+          var dx = e.clientX - startX;
+          var dy = e.clientY - startY;
+
+          if(!isDragging){
+            if(Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD){
+              isDragging = true;
+            }
+          }
+
+          if(isDragging){
+            e.preventDefault();
+            applyTransform(baseX + dx, baseY + dy);
+
+            if(!dragNotified){
+              dragNotified = true;
+              onFirstDrag();
+            }
+          }
+        }, { passive: false });
+
+        el.addEventListener('pointerup', function(e){
+          if(!isDown) return;
+          if(e.pointerId !== pointerId) return;
+
+          isDown = false;
+
+          if(!isDragging && allowTapFlip){
+            onFirstTap();
+            onTapFlip();
+          }
+        });
+
+        el.addEventListener('pointercancel', function(e){
+          if(e.pointerId !== pointerId) return;
+          isDown = false;
+          isDragging = false;
+        });
+      }
+
+      makeDraggable(outerLayer, {
+        allowTapFlip: false,
+        onFirstDrag: function(){ markDragDone(); }
+      });
+
+      makeDraggable(innerLayer, {
+        allowTapFlip: true,
+        onFirstDrag: function(){ markDragDone(); },
+        onFirstTap: function(){ markTapDone(); },
+        onTapFlip: function(){
+          if(!innerLayer) return;
+          innerLayer.classList.toggle('is-flipped');
+        }
+      });
+
+      goFront();
+    })();
+  </script>
+
+  {% schema %}
+  {
+    "name": "Interactive Invite",
+    "settings": [
+      { "type": "range", "id": "max_width", "label": "Max width (px)", "min": 320, "max": 760, "step": 10, "default": 520 },
+      { "type": "color", "id": "background", "label": "Background", "default": "#FFFFFF" },
+      { "type": "url", "id": "details_url", "label": "Details button URL" },
+
+      { "type": "header", "content": "Envelope images" },
+      { "type": "image_picker", "id": "envelope_front", "label": "Envelope front (optional override)" },
+      { "type": "text", "id": "alt_envelope_front", "label": "Alt text: envelope front", "default": "Envelope front" },
+      { "type": "image_picker", "id": "envelope_back_filled", "label": "Envelope back filled" },
+      { "type": "text", "id": "alt_envelope_back", "label": "Alt text: envelope back", "default": "Envelope back" },
+      { "type": "image_picker", "id": "envelope_piece", "label": "Envelope piece overlay (optional)" },
+
+      { "type": "header", "content": "Invite images" },
+      { "type": "image_picker", "id": "invite_outer_front", "label": "Invite outer front" },
+      { "type": "text", "id": "alt_outer", "label": "Alt text: outer layer", "default": "Invitation outer" },
+      { "type": "image_picker", "id": "invite_inner_front", "label": "Invite inner front" },
+      { "type": "text", "id": "alt_inner_front", "label": "Alt text: inner front", "default": "Invitation inner front" },
+      { "type": "image_picker", "id": "invite_inner_back", "label": "Invite inner back" },
+      { "type": "text", "id": "alt_inner_back", "label": "Alt text: inner back", "default": "Invitation inner back" },
+
+      { "type": "header", "content": "Buttons" },
+      { "type": "color", "id": "button_bg", "label": "Button background", "default": "#8FA394" },
+      { "type": "color", "id": "button_bg_hover", "label": "Button hover background", "default": "#7E9686" },
+      { "type": "color", "id": "button_text", "label": "Button text", "default": "#FFFFFF" },
+      { "type": "color", "id": "button_disabled_bg", "label": "Button disabled background", "default": "#C9CEC9" },
+      { "type": "color", "id": "button_disabled_text", "label": "Button disabled text", "default": "#FFFFFF" },
+
+      { "type": "header", "content": "Icons" },
+      { "type": "image_picker", "id": "restart_icon", "label": "Restart icon" },
+      { "type": "image_picker", "id": "hint_arrow", "label": "Hint arrow (optional override)" }
+    ],
+    "presets": [
+      { "name": "Interactive Invite" }
+    ]
+  }
+  {% endschema %}
+</section>

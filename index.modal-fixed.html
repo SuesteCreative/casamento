@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#070A12" />
+
+  <title>Sueste - Creative Agency | Design, Web, Social Media e Drone</title>
+  <meta name="description" content="Sueste - Creative Agency. Movimento com intenção para criar impacto. Design Gráfico, Social Media, Desenvolvimento Web e Drone Media no Algarve, Portugal." />
+  <meta name="robots" content="index,follow" />
+
+  <link rel="icon" href="images/fav-icon.png" />
+  <link rel="apple-touch-icon" href="images/fav-icon.png" />
+
+  <link rel="preload" as="image" href="images/logo-white-hor.png" />
+
+  <link rel="stylesheet" href="styles.css?v=20260128-4" />
+</head>
+
+<body>
+  <!-- waves canvas start -->
+  <canvas id="bg-waves" aria-hidden="true"></canvas>
+  <!-- waves canvas end -->
+  <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
+
+  <main id="conteudo">
+    <!-- hero section start -->
+    <section class="hero hero-video" aria-label="Hero">
+      <div class="hero-video-wrap" aria-hidden="true">
+        <video
+          id="heroVideo"
+          class="hero-video-el"
+          autoplay
+          muted
+          loop
+          playsinline
+          webkit-playsinline
+          preload="auto"
+          disablepictureinpicture
+        >
+          <source src="images/hero-video.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div class="hero-overlay" aria-hidden="true"></div>
+
+      <header class="site-header site-header--overlay" id="topo" role="banner">
+        <div class="container header-inner">
+          <a class="brand" href="#topo" aria-label="Sueste - Creative Agency, voltar ao topo">
+            <img
+              src="images/logo-white-hor.png"
+              alt="Sueste - Creative Agency"
+              width="520"
+              height="120"
+              loading="eager"
+              decoding="async"
+              class="brand-logo brand-logo--xl"
+            />
+          </a>
+
+          <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="site-nav">
+            <span class="nav-toggle-lines" aria-hidden="true"></span>
+          </button>
+
+          <nav class="site-nav site-nav--pills" id="site-nav" aria-label="Navegação principal">
+            <a class="nav-pill" href="#servicos">Serviços</a>
+            <a class="nav-pill" href="#projetos">Projetos</a>
+            <a class="nav-pill" href="#processo">Processo</a>
+            <a class="nav-pill" href="#sobre">Sobre</a>
+            <a class="nav-pill" href="#testemunhos">Testemunhos</a>
+            <a class="nav-pill nav-pill--cta" href="#contacto">Pedir proposta</a>
+          </nav>
+        </div>
+      </header>
+
+      <div class="container hero-content">
+        <div class="hero-left">
+          <div class="hero-title-box">
+            <h1 class="hero-typed" aria-label="O que move nem sempre se vê. Mas o impacto é inevitável.">
+              <span class="typed-row">
+                <span id="typed-prefix" class="typed-prefix" data-text="O que move nem sempre se vê. Mas o "></span>
+                <span id="typed-slow" class="typed-slow" data-text="impacto é "></span>
+                <span id="typed-highlight" class="typed-highlight" data-text="inevitável."></span>
+                <span class="typed-caret" aria-hidden="true"></span>
+              </span>
+            </h1>
+          </div>
+
+          <div class="hero-actions-box">
+            <div class="hero-pills" role="navigation" aria-label="Atalhos para serviços">
+              <a class="pill-link" href="#design-grafico">Design Gráfico</a>
+              <a class="pill-link" href="#social-media">Social Media</a>
+              <a class="pill-link" href="#desenvolvimento-web">Desenvolvimento Web</a>
+              <a class="pill-link" href="#drone-media">Drone Media</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a class="scroll-indicator" href="#servicos" aria-label="Scroll para baixo">
+        <span class="scroll-track" aria-hidden="true">
+          <span class="scroll-ball" aria-hidden="true"></span>
+        </span>
+        <span class="scroll-label">EXPLORE</span>
+      </a>
+    </section>
+    <!-- hero section end -->
+    <!-- services section start -->
+
+    <section class="section section-services" id="servicos" aria-label="Serviços">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker">O QUE FAZEMOS</p>
+          <h2>Serviços para elevar a sua <span class="title-grad">marca</span></h2>
+          <p class="section-sub">
+            Do conceito à execução, criamos soluções visuais e digitais com clareza, consistência e focados em resultados.
+          </p>
+        </div>
+
+        <div class="grid services-grid" role="list">
+          <a class="glass service-card service-card--wide" id="design-grafico" href="#contacto" role="listitem" aria-labelledby="srv-design" aria-describedby="srv-design-desc">
+            <div class="service-top">
+              <span class="service-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 20h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M16.5 3.5l4 4L8 20l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="service-tag">IDENTIDADE</span>
+            </div>
+
+            <span class="service-line" aria-hidden="true"></span>
+
+            <h3 class="service-title" id="srv-design">Design Gráfico</h3>
+            <p class="service-desc" id="srv-design-desc">
+              Identidade visual, sistemas e peças com intenção, pensadas para consistência e reconhecimento.
+            </p>
+
+            <span class="pill-link service-cta" aria-hidden="true">Saber mais</span>
+          </a>
+
+          <a class="glass service-card service-card--narrow" id="social-media" href="#contacto" role="listitem" aria-labelledby="srv-social" aria-describedby="srv-social-desc">
+            <div class="service-top">
+              <span class="service-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M6.5 6.5h11a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2H9.6L6.5 21v-2.3a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="service-tag">CONTEÚDO</span>
+            </div>
+
+            <span class="service-line" aria-hidden="true"></span>
+
+            <h3 class="service-title" id="srv-social">Social Media</h3>
+            <p class="service-desc" id="srv-social-desc">
+              Conteúdo coerente, direção visual e ritmo editorial para crescer com presença.
+            </p>
+
+            <span class="pill-link service-cta" aria-hidden="true">Saber mais</span>
+          </a>
+
+          <a class="glass service-card service-card--narrow" id="desenvolvimento-web" href="#contacto" role="listitem" aria-labelledby="srv-web" aria-describedby="srv-web-desc">
+            <div class="service-top">
+              <span class="service-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M9 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M15 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="service-tag">WEB</span>
+            </div>
+
+            <span class="service-line" aria-hidden="true"></span>
+
+            <h3 class="service-title" id="srv-web">Desenvolvimento Web</h3>
+            <p class="service-desc" id="srv-web-desc">
+              Sites rápidos e responsivos, com SEO e performance no centro desde o primeiro dia.
+            </p>
+
+            <span class="pill-link service-cta" aria-hidden="true">Saber mais</span>
+          </a>
+
+          <a class="glass service-card service-card--wide" id="drone-media" href="#contacto" role="listitem" aria-labelledby="srv-drone" aria-describedby="srv-drone-desc">
+            <div class="service-top">
+              <span class="service-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 10l-3-3m3 7l-3 3m13-7l3-3m-3 7l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M9.2 14.8a4 4 0 1 1 5.6 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="service-tag">CAPTAÇÃO</span>
+            </div>
+
+            <span class="service-line" aria-hidden="true"></span>
+
+            <h3 class="service-title" id="srv-drone">Drone Media</h3>
+            <p class="service-desc" id="srv-drone-desc">
+              Captação e edição com impacto, para valorizar espaços, projetos e experiências.
+            </p>
+
+            <span class="pill-link service-cta" aria-hidden="true">Saber mais</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    <!-- services section end -->
+    <!-- projects section start -->
+
+    <section class="section section-projects" id="projetos" aria-label="Projetos">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker">PORTFÓLIO</p>
+          <h2>Alguns projetos que criaram <span class="title-grad">impacto</span></h2>
+          <p class="section-sub">Exemplos curtos, sem ruído.</p>
+        </div>
+
+        <div class="grid projects-grid">
+          <article class="glass project-card project-card--featured" aria-label="Desportos Náuticos de Alvor case study">
+            <div class="project-card__top project-feature">
+              <div class="project-main">
+                <div class="project-brand">
+                  <img
+                    class="project-logo"
+                    src="images/logo-dna-white.png"
+                    alt="Logótipo Desportos Náuticos de Alvor"
+                    width="140"
+                    height="44"
+                    loading="eager"
+                    decoding="async"
+                  />
+                  <div class="project-brand__text">
+                    <h3 class="project-title">Desportos Náuticos de Alvor</h3>
+                    <p class="project-desc">
+                      Reposicionamento premium com foco em performance, consistência visual e conteúdos orientados a resultados.
+                    </p>
+
+                    <ul class="project-tags" aria-label="Áreas do projeto">
+                      <li><span class="pill-link project-tag">Website</span></li>
+                      <li><span class="pill-link project-tag">Social Media</span></li>
+                      <li><span class="pill-link project-tag">Fardas</span></li>
+                      <li><span class="pill-link project-tag">Insights</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <aside class="project-aside" aria-label="Destaques do projeto">
+                <div class="project-insights" role="list" aria-label="Destaques de performance">
+                  <div class="project-insight" role="listitem">
+                    <div class="project-insight__top">
+                      <span class="project-insight__num"><span class="title-grad">+89%</span></span>
+                      <span class="project-insight__icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M12 5l7 7-1.9 1.9L13 9.8V20h-2V9.8L6.9 13.9 5 12l7-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <p class="project-insight__label">Sessions</p>
+                  </div>
+
+                  <div class="project-insight" role="listitem">
+                    <div class="project-insight__top">
+                      <span class="project-insight__num"><span class="title-grad">+146%</span></span>
+                      <span class="project-insight__icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M12 5l7 7-1.9 1.9L13 9.8V20h-2V9.8L6.9 13.9 5 12l7-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <p class="project-insight__label">Sales</p>
+                  </div>
+
+                  <div class="project-insight" role="listitem">
+                    <div class="project-insight__top">
+                      <span class="project-insight__num"><span class="title-grad">+450%</span></span>
+                      <span class="project-insight__icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M12 5l7 7-1.9 1.9L13 9.8V20h-2V9.8L6.9 13.9 5 12l7-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <p class="project-insight__label">Followers</p>
+                  </div>
+                </div>
+
+                <div class="project-actions">
+                  <button
+                    class="pill-link project-cta"
+                    type="button"
+                    data-modal-open="cs-dna"
+                    aria-haspopup="dialog"
+                    aria-controls="cs-dna"
+                  >
+                    Ver case study
+                  </button>
+                </div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="glass project-card" aria-label="Projeto 01">
+            <div class="project-thumb" aria-hidden="true"></div>
+            <h3 class="project-title">Projeto 01</h3>
+            <p class="project-desc">Identidade e design.</p>
+          </article>
+
+          <article class="glass project-card" aria-label="Projeto 02">
+            <div class="project-thumb" aria-hidden="true"></div>
+            <h3 class="project-title">Projeto 02</h3>
+            <p class="project-desc">Website e performance.</p>
+          </article>
+        </div>
+        <!-- case study modal start -->
+
+        <div class="cs-modal" id="cs-dna" data-modal hidden>
+          <div class="cs-backdrop" data-modal-close aria-hidden="true"></div>
+
+          <div
+            class="cs-dialog glass"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cs-dna-title"
+            aria-describedby="cs-dna-desc"
+            tabindex="-1"
+          >
+            <header class="cs-header">
+              <div class="cs-header__left">
+                <img
+                  class="cs-logo"
+                  src="images/logo-dna-white.png"
+                  alt="Logótipo Desportos Náuticos de Alvor"
+                  width="150"
+                  height="48"
+                  loading="eager"
+                  decoding="async"
+                />
+
+                <div class="cs-header__text">
+                  <h3 class="cs-title" id="cs-dna-title">Desportos Náuticos de Alvor</h3>
+                  <p class="cs-lead" id="cs-dna-desc">
+                    Case study completo com visão geral, solução por áreas e placeholders para resultados e métricas.
+                  </p>
+
+                  <ul class="cs-tags" aria-label="Tags do case study">
+                    <li><span class="pill-link cs-tag">Website</span></li>
+                    <li><span class="pill-link cs-tag">Social Media</span></li>
+                    <li><span class="pill-link cs-tag">Fardas</span></li>
+                    <li><span class="pill-link cs-tag">Insights</span></li>
+                  </ul>
+                </div>
+              </div>
+
+              <button class="pill-link cs-close" type="button" data-modal-close aria-label="Fechar case study">
+                Fechar
+              </button>
+            </header>
+
+            <div class="cs-body">
+              <section class="cs-section">
+                <h4 class="cs-h">Visão geral</h4>
+                <p class="cs-p">
+                  Projeto orientado a reforçar posicionamento premium e a melhorar clareza de oferta, navegação e conversão.
+                </p>
+              </section>
+    <!-- projects section end -->
+
+              <section class="cs-section">
+                <h4 class="cs-h">Desafio</h4>
+                <p class="cs-p">
+                  Unificar comunicação, elevar a perceção de valor e criar uma experiência digital consistente em todos os pontos de contacto.
+                </p>
+              </section>
+
+              <section class="cs-section">
+                <h4 class="cs-h">Objetivos</h4>
+                <ul class="cs-list">
+                  <li>Melhorar a experiência do utilizador e o percurso até à reserva.</li>
+                  <li>Reforçar consistência visual e identidade.</li>
+                  <li>Garantir performance e base sólida para crescimento.</li>
+                </ul>
+              </section>
+
+              <section class="cs-section">
+                <h4 class="cs-h">Solução</h4>
+
+                <div class="cs-solution">
+                  <div class="cs-solution__block">
+                    <h5 class="cs-sh">Desenvolvimento web</h5>
+                    <p class="cs-p">
+                      One page premium com foco em performance, estrutura, SEO e componentes reutilizáveis em glass.
+                    </p>
+
+                    <div class="cs-video">
+                      <video
+                        class="cs-video__el"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        preload="metadata"
+                        controls
+                      >
+                        <source src="images/dna-web-dev.mp4" type="video/mp4" />
+                        O seu browser não suporta vídeo HTML5.
+                      </video>
+                    </div>
+                  </div>
+
+                  <div class="cs-solution__grid" aria-label="Apoios visuais do projeto">
+                    <button
+                      class="glass cs-media-card cs-media-btn"
+                      type="button"
+                      data-lightbox-src="images/default.png"
+                      data-lightbox-alt="Mockup Social Media"
+                      aria-label="Abrir imagem Social Media"
+                    >
+                      <img
+                        src="images/default.png"
+                        alt="Mockup Social Media"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span class="cs-cap">Social Media</span>
+                    </button>
+
+                    <button
+                      class="glass cs-media-card cs-media-btn"
+                      type="button"
+                      data-lightbox-src="images/default.png"
+                      data-lightbox-alt="Mockup Fardas"
+                      aria-label="Abrir imagem Fardas"
+                    >
+                      <img
+                        src="images/default.png"
+                        alt="Mockup Fardas"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span class="cs-cap">Fardas</span>
+                    </button>
+
+                    <button
+                      class="glass cs-media-card cs-media-btn"
+                      type="button"
+                      data-lightbox-src="images/default.png"
+                      data-lightbox-alt="Mockup Resultados e Insights"
+                      aria-label="Abrir imagem Resultados"
+                    >
+                      <img
+                        src="images/default.png"
+                        alt="Mockup Resultados e Insights"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span class="cs-cap">Resultados</span>
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <section class="cs-section">
+                <h4 class="cs-h">Entregáveis</h4>
+                <ul class="cs-list">
+                  <li>Website e componentes UI (glass system).</li>
+                  <li>Direção visual e templates de conteúdo.</li>
+                  <li>Mockups e assets de branding para fardas.</li>
+                  <li>Estrutura de reporting e insights (placeholders).</li>
+                </ul>
+              </section>
+
+              <section class="cs-section">
+                <h4 class="cs-h">Resultados e insights</h4>
+
+                <div class="cs-stats" role="list" aria-label="Métricas do projeto">
+                  <div class="glass cs-stat" role="listitem">
+                    <p class="cs-stat__num"><span class="title-grad">+00%</span></p>
+                    <p class="cs-stat__label">Conversão, período (placeholder)</p>
+                  </div>
+
+                  <div class="glass cs-stat" role="listitem">
+                    <p class="cs-stat__num"><span class="title-grad">-00%</span></p>
+                    <p class="cs-stat__label">Tempo de decisão, período (placeholder)</p>
+                  </div>
+
+                  <div class="glass cs-stat" role="listitem">
+                    <p class="cs-stat__num"><span class="title-grad">+00%</span></p>
+                    <p class="cs-stat__label">Engagement, período (placeholder)</p>
+                  </div>
+
+                  <div class="glass cs-stat" role="listitem">
+                    <p class="cs-stat__num"><span class="title-grad">00x</span></p>
+                    <p class="cs-stat__label">Velocidade e performance (placeholder)</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <footer class="cs-footer">
+              <a class="pill-link cs-footer__cta" href="#contacto">Falar com a Sueste</a>
+              <button class="pill-link cs-footer__close" type="button" data-modal-close>Fechar</button>
+            </footer>
+          </div>
+        </div>
+        <!-- case study modal end -->
+        <!-- case study lightbox start -->
+
+        <div class="cs-lightbox" id="cs-lightbox" data-lightbox hidden>
+          <div class="cs-lightbox__backdrop" data-lightbox-close aria-hidden="true"></div>
+
+          <div
+            class="cs-lightbox__dialog glass"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Pré-visualização de imagem"
+            tabindex="-1"
+          >
+            <div class="cs-lightbox__top">
+              <p class="cs-lightbox__label" id="cs-lightbox-label">Pré-visualização</p>
+              <button class="pill-link cs-lightbox__close" type="button" data-lightbox-close aria-label="Fechar pré-visualização">
+                Fechar
+              </button>
+            </div>
+
+            <img
+              class="cs-lightbox__img"
+              src="images/default.png"
+              alt=""
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+        </div>
+        <!-- case study lightbox end -->
+      </div>
+    </section>
+    <!-- process section start -->
+
+    <section class="section" id="processo" aria-label="Processo">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker">PROCESSO</p>
+          <h2>Direção clara, execução <span class="title-grad">rápida</span></h2>
+          <p class="section-sub">Poucas etapas, máximo alinhamento.</p>
+        </div>
+
+        <div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;">
+          <div class="glass" style="padding:18px;">
+            <h3 style="margin:0 0 8px;font-weight:900;">1. Descoberta</h3>
+            <p style="margin:0;color:var(--ink-soft);line-height:1.6;">Objetivos e referências.</p>
+          </div>
+          <div class="glass" style="padding:18px;">
+            <h3 style="margin:0 0 8px;font-weight:900;">2. Direção</h3>
+            <p style="margin:0;color:var(--ink-soft);line-height:1.6;">Estrutura e linguagem.</p>
+          </div>
+          <div class="glass" style="padding:18px;">
+            <h3 style="margin:0 0 8px;font-weight:900;">3. Entrega</h3>
+            <p style="margin:0;color:var(--ink-soft);line-height:1.6;">Ficheiros prontos a usar.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- process section end -->
+    <!-- about section start -->
+
+    <section class="section" id="sobre" aria-label="Sobre">
+      <div class="container">
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:18px;align-items:stretch;">
+          <div class="glass" style="padding:22px;">
+            <p class="kicker">SOBRE</p>
+            <h2 style="margin:0;font-weight:950;letter-spacing:-0.02em;line-height:1.08;font-size:clamp(26px,3vw,40px);">
+              Uma agência pequena, com obsessão por <span class="title-grad">detalhe</span>
+            </h2>
+            <p style="margin:12px 0 0;color:var(--ink-soft);line-height:1.7;">
+              A Sueste nasce do Algarve, inspirada pelo vento que muda direções e levanta ondas.
+            </p>
+          </div>
+
+          <div class="glass" style="padding:22px;">
+            <h3 style="margin:0 0 10px;font-weight:900;">O que podes esperar</h3>
+            <ul style="margin:0;color:var(--ink-soft);line-height:1.7;">
+              <li>Direção criativa e consistência visual</li>
+              <li>Entrega rápida e comunicação simples</li>
+              <li>Performance e atenção ao detalhe</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- about section end -->
+    <!-- testimonials section start -->
+
+    <section class="section" id="testemunhos" aria-label="Testemunhos">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker">TESTEMUNHOS</p>
+          <h2>Feedback que confirma <span class="title-grad">confiança</span></h2>
+          <p class="section-sub">Texto placeholder, curto e direto.</p>
+        </div>
+
+        <div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;">
+          <div class="glass" style="padding:18px;">
+            <p style="margin:0;color:var(--ink-soft);line-height:1.7;">“Rápido, consistente, impecável.”</p>
+            <p style="margin:12px 0 0;font-weight:900;">Cliente 01</p>
+          </div>
+          <div class="glass" style="padding:18px;">
+            <p style="margin:0;color:var(--ink-soft);line-height:1.7;">“Visual premium e execução limpa.”</p>
+            <p style="margin:12px 0 0;font-weight:900;">Cliente 02</p>
+          </div>
+          <div class="glass" style="padding:18px;">
+            <p style="margin:0;color:var(--ink-soft);line-height:1.7;">“Bom gosto e atenção ao detalhe.”</p>
+            <p style="margin:12px 0 0;font-weight:900;">Cliente 03</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- testimonials section end -->
+    <!-- contact section start -->
+
+    <section class="section" id="contacto" aria-label="Contacto">
+      <div class="container">
+        <div class="grid" style="grid-template-columns:1.1fr 0.9fr;gap:18px;align-items:stretch;">
+          <div class="glass" style="padding:22px;">
+            <p class="kicker">CONTACTO</p>
+            <h2 style="margin:0;font-weight:950;letter-spacing:-0.02em;line-height:1.08;font-size:clamp(26px,3vw,40px);">
+              Vamos criar algo que provoque <span class="title-grad">impacto</span>
+            </h2>
+            <p style="margin:12px 0 0;color:var(--ink-soft);line-height:1.7;">
+              Conta o que precisas e respondemos com uma proposta clara.
+            </p>
+
+            <form style="margin-top:16px;display:grid;gap:12px;">
+              <input type="text" name="nome" placeholder="Nome" autocomplete="name" />
+              <input type="email" name="email" placeholder="Email" autocomplete="email" />
+              <textarea name="mensagem" placeholder="Mensagem"></textarea>
+              <button class="btn primary" type="button">Enviar</button>
+            </form>
+          </div>
+
+          <div class="glass" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+              <h3 style="margin:0 0 10px;font-weight:900;">Detalhes</h3>
+              <p style="margin:0;color:var(--ink-soft);line-height:1.7;">
+                Algarve, Portugal<br />
+                <span style="opacity:0.8;">hello@sueste.pt</span>
+              </p>
+            </div>
+
+            <p style="margin:22px 0 0;color:rgba(255,255,255,0.55);font-size:13px;line-height:1.6;">
+              © <span id="year">2026</span> Sueste - Creative Agency
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- contact section end -->
+    <!-- footer start -->
+
+    <footer class="site-footer section" aria-label="Rodapé" style="padding-top:0;">
+      <div class="container">
+        <div class="glass" style="padding:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <span style="color:rgba(255,255,255,0.70);font-size:13px;">Sueste - Creative Agency</span>
+          <a href="#topo" class="btn secondary" style="padding:10px 14px;border-radius:14px;">Voltar ao topo</a>
+        </div>
+      </div>
+    </footer>
+    <!-- footer end -->
+  </main>
+
+  <!-- scripts start -->
+  <script>
+    (function () {
+      const toggle = document.querySelector(".nav-toggle");
+      const nav = document.querySelector(".site-nav");
+      if (toggle && nav) {
+        toggle.addEventListener("click", () => {
+          const open = nav.classList.toggle("is-open");
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        nav.querySelectorAll("a").forEach((a) => {
+          a.addEventListener("click", () => {
+            nav.classList.remove("is-open");
+            toggle.setAttribute("aria-expanded", "false");
+          });
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!nav.classList.contains("is-open")) return;
+          const isInside = nav.contains(e.target) || toggle.contains(e.target);
+          if (!isInside) {
+            nav.classList.remove("is-open");
+            toggle.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+
+      const y = document.getElementById("year");
+      if (y) y.textContent = String(new Date().getFullYear());
+
+      const prefixEl = document.getElementById("typed-prefix");
+      const slowEl = document.getElementById("typed-slow");
+      const hiEl = document.getElementById("typed-highlight");
+      if (!prefixEl || !slowEl || !hiEl) return;
+
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) {
+        prefixEl.textContent = prefixEl.getAttribute("data-text") || "";
+        slowEl.textContent = slowEl.getAttribute("data-text") || "";
+        hiEl.textContent = hiEl.getAttribute("data-text") || "";
+        const caret = document.querySelector(".typed-caret");
+        if (caret) caret.style.display = "none";
+        return;
+      }
+
+      const prefix = prefixEl.getAttribute("data-text") || "";
+      const slow = slowEl.getAttribute("data-text") || "";
+      const hi = hiEl.getAttribute("data-text") || "";
+
+      prefixEl.textContent = "";
+      slowEl.textContent = "";
+      hiEl.textContent = "";
+
+      let i = 0;
+      let j = 0;
+      let k = 0;
+
+      const slowStart = prefix.length;
+
+      function delayFor(pos) {
+        if (pos < slowStart) return 16;
+        const t = (pos - slowStart) / Math.max(1, slow.length + hi.length);
+        return 90 + (t * 190);
+      }
+
+      function tick() {
+        if (i < prefix.length) {
+          i += 1;
+          prefixEl.textContent = prefix.slice(0, i);
+        } else if (j < slow.length) {
+          j += 1;
+          slowEl.textContent = slow.slice(0, j);
+        } else if (k < hi.length) {
+          k += 1;
+          hiEl.textContent = hi.slice(0, k);
+        } else {
+          return;
+        }
+
+        const pos = i + j + k;
+        setTimeout(tick, delayFor(pos));
+      }
+
+      setTimeout(tick, 240);
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const v = document.getElementById("heroVideo") || document.querySelector(".hero-video-el");
+      if (!v) return;
+
+      const setIOSAttrs = () => {
+        v.muted = true;
+        v.defaultMuted = true;
+        v.playsInline = true;
+        v.setAttribute("muted", "");
+        v.setAttribute("playsinline", "");
+        v.setAttribute("webkit-playsinline", "");
+        v.removeAttribute("controls");
+      };
+
+      const tryPlay = () => {
+        setIOSAttrs();
+        const p = v.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      };
+
+      const stopListeners = () => {
+        window.removeEventListener("touchstart", tryPlay);
+        window.removeEventListener("touchend", tryPlay);
+        window.removeEventListener("click", tryPlay);
+        window.removeEventListener("pointerdown", tryPlay);
+        window.removeEventListener("scroll", tryPlay);
+      };
+
+      setIOSAttrs();
+
+      v.addEventListener("playing", stopListeners, { once: true });
+      v.addEventListener("loadedmetadata", tryPlay);
+      v.addEventListener("canplay", tryPlay);
+
+      window.addEventListener("touchstart", tryPlay, { passive: true });
+      window.addEventListener("touchend", tryPlay, { passive: true });
+      window.addEventListener("click", tryPlay);
+      window.addEventListener("pointerdown", tryPlay);
+      window.addEventListener("scroll", tryPlay, { passive: true });
+
+      window.addEventListener("pageshow", tryPlay);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) tryPlay();
+      });
+
+      let tries = 0;
+      const timer = setInterval(() => {
+        tries += 1;
+        if (!v.paused || tries > 12) clearInterval(timer);
+        tryPlay();
+      }, 350);
+
+      tryPlay();
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const OPEN_ATTR = "data-modal-open";
+      const CLOSE_ATTR = "data-modal-close";
+
+      let activeModal = null;
+      let lastFocus = null;
+
+      const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const closeDelay = prefersReduced ? 0 : 180;
+
+      function lockBody(lock) {
+        document.body.classList.toggle("is-modal-open", lock);
+      }
+
+      function openModal(id, trigger) {
+        const modal = document.getElementById(id);
+        if (!modal) return;
+
+        const dialog = modal.querySelector(".cs-dialog");
+        if (!dialog) return;
+
+        lastFocus = trigger || document.activeElement;
+        activeModal = modal;
+
+        modal.hidden = false;
+        modal.classList.add("is-open");
+        lockBody(true);
+
+        requestAnimationFrame(() => {
+          dialog.focus({ preventScroll: true });
+
+          const vid = dialog.querySelector("video");
+          if (vid) {
+            vid.muted = true;
+            vid.defaultMuted = true;
+            vid.setAttribute("muted", "");
+            const p = vid.play();
+            if (p && typeof p.catch === "function") p.catch(() => {});
+          }
+        });
+      }
+
+      function closeModal(modal) {
+        if (!modal) return;
+
+        modal.classList.remove("is-open");
+        lockBody(false);
+
+        const toRestore = lastFocus;
+        activeModal = null;
+
+        window.setTimeout(() => {
+          modal.hidden = true;
+          if (toRestore && typeof toRestore.focus === "function") {
+            toRestore.focus({ preventScroll: true });
+          }
+        }, closeDelay);
+      }
+
+      function onClick(e) {
+        const openBtn = e.target.closest("[" + OPEN_ATTR + "]");
+        if (openBtn) {
+          const id = openBtn.getAttribute(OPEN_ATTR);
+          if (id) openModal(id, openBtn);
+          return;
+        }
+
+        if (!activeModal) return;
+
+        const closeHit = e.target.closest("[" + CLOSE_ATTR + "]");
+        if (closeHit) {
+          e.preventDefault();
+          closeModal(activeModal);
+        }
+      }
+
+      function onKeyDown(e) {
+        if (!activeModal) return;
+
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeModal(activeModal);
+        }
+      }
+
+      document.addEventListener("click", onClick);
+      document.addEventListener("keydown", onKeyDown);
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const LB = document.querySelector("[data-lightbox]");
+      if (!LB) return;
+
+      const dlg = LB.querySelector(".cs-lightbox__dialog");
+      const img = LB.querySelector(".cs-lightbox__img");
+      const label = document.getElementById("cs-lightbox-label");
+
+      let lastFocus = null;
+      const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const closeDelay = prefersReduced ? 0 : 180;
+
+      function lockBody(lock) {
+        document.body.classList.toggle("is-modal-open", lock);
+      }
+
+      function openLightbox(src, alt, trigger) {
+        if (!img) return;
+
+        lastFocus = trigger || document.activeElement;
+
+        img.src = src || "images/default.png";
+        img.alt = alt || "";
+
+        LB.hidden = false;
+        LB.classList.add("is-open");
+        lockBody(true);
+
+        requestAnimationFrame(() => {
+          if (dlg) dlg.focus({ preventScroll: true });
+        });
+
+        if (label) label.textContent = alt ? alt : "Pré-visualização";
+      }
+
+      function closeLightbox() {
+        LB.classList.remove("is-open");
+        lockBody(false);
+
+        const toRestore = lastFocus;
+        window.setTimeout(() => {
+          LB.hidden = true;
+          if (img) {
+            img.src = "images/default.png";
+            img.alt = "";
+          }
+          if (toRestore && typeof toRestore.focus === "function") {
+            toRestore.focus({ preventScroll: true });
+          }
+        }, closeDelay);
+      }
+
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-lightbox-src]");
+        if (btn) {
+          const src = btn.getAttribute("data-lightbox-src");
+          const alt = btn.getAttribute("data-lightbox-alt") || "";
+          openLightbox(src, alt, btn);
+          return;
+        }
+
+        if (!LB.classList.contains("is-open")) return;
+
+        const closeHit = e.target.closest("[data-lightbox-close]");
+        if (closeHit) {
+          e.preventDefault();
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (!LB.classList.contains("is-open")) return;
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeLightbox();
+        }
+      });
+    })();
+  </script>
+
+  <script src="./waves.js?v=20260128-1"></script>
+  <!-- scripts end -->
+</body>
+</html>

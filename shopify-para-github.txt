@@ -1,0 +1,1452 @@
+{% comment %}
+  SECTION 1 – FULL-WIDTH TOP BANNER
+  * Background: #f1ecce (mandatory)
+  * Logo: responsive, top-centered
+  * Load animation only
+  * Delay: 0.5s
+  * Zero white strips on any screen size
+{% endcomment %}
+
+<style>
+.banner-section{
+  background:#f1ecce;
+  margin:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:clamp(20px, 4vw, 40px) clamp(10px, 2vw, 20px);
+}
+
+.banner-section > *{ margin:0; }
+
+.banner-logo{
+  width:clamp(180px, 18vw, 320px);
+  height:auto;
+  opacity:0;
+  transform:translateY(20px);
+  animation:fadeUp 1s ease .5s forwards;
+}
+
+@keyframes fadeUp{
+  to{ opacity:1; transform:translateY(0); }
+}
+</style>
+
+<div class="banner-section">
+  <img
+    class="banner-logo"
+    src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/logo-head.png?v=1766314552"
+    alt="Wedding Logo"
+    loading="eager"
+    decoding="async"
+  >
+</div>
+
+<style>
+.two-col-section {
+  background:#f1ecce;
+  padding:clamp(40px,8vw,80px) 0;
+  display:flex;
+  align-items:center;
+  min-height:60vh;
+}
+
+.left-half,
+.right-half { box-sizing:border-box; }
+
+.img-swap {
+  position:relative;
+  width:clamp(220px,26vw,340px);
+  aspect-ratio:1 / 1;
+  cursor:pointer;
+}
+.img-swap img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+  transition:opacity .5s ease, transform .5s ease;
+}
+.img-swap .top { z-index:2; opacity:1; }
+.img-swap .bottom { z-index:1; opacity:1; transform:scale(1.05); }
+
+@media (min-width:701px){
+  .left-half{
+    flex:0 0 50%;
+    display:flex;
+    justify-content:flex-end;
+    padding-right:clamp(40px,6vw,80px);
+  }
+  .right-half{
+    flex:0 0 50%;
+    padding-left:clamp(40px,6vw,80px);
+    padding-right:clamp(40px,6vw,80px);
+    text-align:center;
+  }
+  .img-swap:hover .bottom{ opacity:0; }
+}
+
+.right-half{ text-align:center; }
+.right-half h2{
+  font-size:clamp(1.6rem,3vw,2.2rem);
+  margin:0 0 .6em;
+}
+.right-half h2 span{ display:block; }
+
+.countdown-wrapper{
+  margin:0 auto 1.6em;
+  max-width:480px;
+}
+
+.countdown-label-top{ margin:0 0 .3em; font-size:0.95rem; }
+
+.countdown-grid{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 auto .5em;
+}
+
+.countdown-box{
+  flex:1;
+  background:transparent;
+  padding:8px 4px 10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.countdown-number{
+  font-family:'Against', cursive;
+  font-size:clamp(2.4rem,6vw,3.4rem);
+  color:#92aa97;
+}
+
+.countdown-unit{
+  margin-top:4px;
+  font-size:0.8rem;
+  text-transform:lowercase;
+  letter-spacing:.03em;
+}
+
+.countdown-extra{
+  margin:0 0 1.4em;
+  font-size:0.95rem;
+  font-weight:300;
+}
+
+.right-half p{
+  font-weight:250;
+  font-size:clamp(1rem,2vw,1.2rem);
+  margin:0 0 1.2em;
+}
+
+.form-btn{
+  display:inline-block;
+  background:#92aa97;
+  color:#fff;
+  padding:.95em 2.6em;
+  border-radius:14px;
+  text-decoration:none;
+  font-size:1.1rem;
+  transition:background .25s;
+}
+.form-btn:hover{ background:#7a9480; }
+
+@media (max-width:700px){
+  .two-col-section{
+    flex-direction:column;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  .left-half{ margin-bottom:30px; }
+  .img-swap{ width:clamp(200px,60vw,320px); }
+  .countdown-grid{ gap:6px; }
+}
+
+@keyframes fadeUp{ to{ opacity:1; transform:translateY(0); } }
+
+/* reveal system */
+.reveal-item{
+  opacity:0;
+  transform:translateY(30px);
+  will-change:opacity, transform;
+}
+
+.reveal-on.is-visible .reveal-item{
+  animation:fadeUp .9s ease forwards;
+}
+
+/* base delay por secção via CSS variable */
+.reveal-on{
+  --baseDelay: 0s;
+}
+.reveal-on[data-delay="0.5"]{ --baseDelay: .5s; }
+.reveal-on[data-delay="1"]{ --baseDelay: 1s; }
+
+/* stagger soma ao baseDelay */
+.reveal-on.is-visible .reveal-item[data-st="1"]{ animation-delay: calc(var(--baseDelay) + 0s); }
+.reveal-on.is-visible .reveal-item[data-st="2"]{ animation-delay: calc(var(--baseDelay) + .18s); }
+.reveal-on.is-visible .reveal-item[data-st="3"]{ animation-delay: calc(var(--baseDelay) + .36s); }
+.reveal-on.is-visible .reveal-item[data-st="4"]{ animation-delay: calc(var(--baseDelay) + .54s); }
+</style>
+
+<div class="two-col-section reveal-on" data-reveal="load" data-delay="1" id="section-2">
+  <div class="left-half">
+    <div class="img-swap reveal-item" data-st="1" id="swapWrap-2">
+      <img class="top" src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/outline1.png?v=1766317447" alt="Outline 1">
+      <img class="bottom" src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/outline2.2.png?v=1766318303" alt="Outline 2">
+    </div>
+  </div>
+
+  <div class="right-half">
+    <h2 class="reveal-item" data-st="2">
+      <span class="main-line">Um espaço para partilharmos os detalhes do nosso dia</span>
+    </h2>
+
+    <div class="countdown-wrapper reveal-item" data-st="3" id="wedding-countdown-2">
+      <p class="countdown-label-top">Faltam:</p>
+
+      <div class="countdown-grid">
+        <div class="countdown-box">
+          <span id="cd-days-2" class="countdown-number">00</span>
+          <span class="countdown-unit">dias</span>
+        </div>
+        <div class="countdown-box">
+          <span id="cd-hours-2" class="countdown-number">00</span>
+          <span class="countdown-unit">horas</span>
+        </div>
+        <div class="countdown-box">
+          <span id="cd-mins-2" class="countdown-number">00</span>
+          <span class="countdown-unit">minutos</span>
+        </div>
+        <div class="countdown-box">
+          <span id="cd-secs-2" class="countdown-number">00</span>
+          <span class="countdown-unit">segundos</span>
+        </div>
+      </div>
+
+      <p class="countdown-extra">
+        Confirma a tua presença até ao dia 1 de Maio de 2026, respondendo ao questionário:
+      </p>
+    </div>
+
+    <a class="form-btn reveal-item" data-st="4" href="https://docs.google.com/forms/d/1wpmmkwjknMAZgNd1Ka5x_Ohs9oa1Jc9ocBuCv-n3F3k/" target="_blank" rel="noopener">Formulário</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('section-2');
+  if(!root) return;
+
+  function show(){ root.classList.add('is-visible'); }
+
+  var mode = root.getAttribute('data-reveal');
+
+  if(mode === 'load'){
+    show();
+  } else {
+    if(!('IntersectionObserver' in window)){
+      show();
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          show();
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    io.observe(root);
+  }
+
+  var wrap = document.getElementById('swapWrap-2');
+  if (wrap && window.innerWidth <= 700) {
+    wrap.addEventListener('click', function(){ wrap.classList.toggle('swap'); });
+  }
+
+  var end = new Date("2026-08-17T23:59:00");
+  var d=document.getElementById("cd-days-2"),
+      h=document.getElementById("cd-hours-2"),
+      m=document.getElementById("cd-mins-2"),
+      s=document.getElementById("cd-secs-2");
+
+  function pad(n){ return n.toString().padStart(2,'0'); }
+
+  function tick(){
+    var now=new Date(), diff=end-now;
+    if(diff < 0) diff=0;
+
+    var sec=Math.floor(diff/1000),
+        days=Math.floor(sec/86400),
+        hrs=Math.floor((sec%86400)/3600),
+        mins=Math.floor((sec%3600)/60),
+        secs=sec%60;
+
+    if(d) d.textContent=pad(days);
+    if(h) h.textContent=pad(hrs);
+    if(m) m.textContent=pad(mins);
+    if(s) s.textContent=pad(secs);
+  }
+
+  tick();
+  setInterval(tick,1000);
+})();
+</script>
+
+<style>
+.break-icon-inline {
+  background:#f1ecce;
+  padding:16px 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.break-icon-inline img {
+  max-width:120px;
+  width:100%;
+  height:auto;
+  display:block;
+  opacity:0;
+  transform:translateY(20px);
+  animation:fadeUp .65s ease forwards;
+  will-change:opacity, transform;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+</style>
+
+<div class="break-icon-inline">
+  <img
+    src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/qebra.png?v=1766432267"
+    alt="Separador"
+    loading="eager"
+    decoding="async"
+  >
+</div>
+
+<style>
+.details-section {
+  background:#f1ecce;
+  padding:clamp(40px,8vw,80px) 20px 50px;
+  display:flex;
+  justify-content:center;
+}
+
+.details-inner {
+  max-width:1100px;
+  width:100%;
+  margin:0 auto;
+}
+
+.details-text {
+  margin:0 auto 12px auto;
+  max-width:650px;
+}
+
+.details-title,
+.details-list li,
+.details-map,
+.details-link {
+  opacity:0;
+  transform:translateY(20px);
+  will-change:opacity, transform;
+}
+
+.details-section.is-visible .details-title { animation:fadeUp 1s ease 0s forwards; }
+.details-section.is-visible .details-list li { animation:fadeUp .8s ease .15s forwards; }
+.details-section.is-visible .details-map { animation:fadeUp 1s ease .3s forwards; }
+.details-section.is-visible .details-link { animation:fadeUp .8s ease .45s forwards; }
+
+.details-title {
+  font-size:clamp(1.8rem,3vw,2.4rem);
+  margin:0 0 10px;
+  text-align:center;
+}
+
+.details-list {
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.details-list li {
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:6px;
+  font-size:clamp(1.15rem,2.6vw,1.4rem);
+}
+
+.details-list li.details-break { margin-top:0; }
+
+.details-icon {
+  font-size:1.3em;
+  line-height:1;
+  flex-shrink:0;
+}
+
+.details-text-line { line-height:1.4; }
+
+.details-local-trigger {
+  background:none;
+  border:0;
+  padding:0;
+  margin:0;
+  text-decoration:underline;
+  cursor:pointer;
+  font:inherit;
+  color:#586b5b;
+}
+.details-local-trigger:visited { color:#586b5b; }
+.details-local-trigger:hover { color:#586b5b; }
+.details-local-trigger:active { color:#586b5b; }
+
+.details-map {
+  max-width:640px;
+  margin:8px auto 0 auto;
+}
+
+.map-frame-wrap {
+  position:relative;
+  width:100%;
+  aspect-ratio:16 / 7;
+  max-height:340px;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.map-frame-wrap iframe {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+.details-links {
+  max-width:1100px;
+  width:100%;
+  margin:14px auto 0;
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.details-link {
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  background:#f1ecce;
+  overflow:visible;
+  text-decoration:none;
+  box-shadow:0 4px 12px rgba(0,0,0,0.18);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+
+.details-link img {
+  max-width:100%;
+  height:auto;
+  display:block;
+  border-radius:12px;
+  transition:transform .25s ease;
+}
+
+.details-link:hover {
+  transform:translateY(6px);
+  box-shadow:0 7px 18px rgba(0,0,0,0.25);
+}
+
+.details-link:hover img { transform:scale(1.2); }
+
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+@media (max-width:768px) {
+  .details-section { padding:30px 14px 32px; }
+  .details-text { text-align:left; }
+  .details-list li { justify-content:flex-start; }
+  .map-frame-wrap { aspect-ratio:16 / 7; max-height:260px; }
+  .details-links { margin-top:10px; gap:10px; }
+  .details-link { width:34px; height:34px; }
+}
+</style>
+
+<section class="details-section" id="wedding-details">
+  <div>
+    <div class="details-inner">
+      <div class="details-text">
+        <h2 class="details-title">Detalhes</h2>
+        <ul class="details-list">
+          <li>
+            <span class="details-icon">📍</span>
+            <button type="button" class="details-text-line details-local-trigger">
+              <strong>Local:</strong> Quinta da Falésia
+            </button>
+          </li>
+          <li>
+            <span class="details-icon">📅</span>
+            <span class="details-text-line">
+              <strong>Dia:</strong> 18 de Julho de 2026
+            </span>
+          </li>
+          <li>
+            <span class="details-icon">⏰</span>
+            <span class="details-text-line">
+              <strong>Hora:</strong> 15h30
+            </span>
+          </li>
+          <li class="details-break">
+            <span class="details-icon">🗺️</span>
+            <span class="details-text-line">
+              <strong>Morada:</strong> R. dos Zimbros 8, 2820-007 Charneca de Caparica
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="details-map">
+        <div class="map-frame-wrap">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d36491.11427398107!2d-9.202867886893683!3d38.620556007523106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1eb500780cfa3f%3A0xb99b58314f9b3274!2sQuinta%20da%20Fal%C3%A9sia!5e1!3m2!1spt-PT!2spt!4v1766319399864!5m2!1spt-PT!2spt"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-links">
+      <a class="details-link" href="https://ul.waze.com/ul?place=ChIJP_oMeAC1Hg0RdDKbTzFYm7k&ll=38.61662190%2C-9.20569320&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" target="_blank" rel="noopener">
+        <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/3Prancheta_10.png?v=1741771978" alt="Waze">
+      </a>
+
+      <a class="details-link" href="https://maps.app.goo.gl/AMe48eKfDLM3Ybna9" target="_blank" rel="noopener">
+        <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/3Prancheta_12.png?v=1741771979" alt="Google Maps">
+      </a>
+
+      <a class="details-link" href="https://maps.apple/r/IeFYpZ4k8_SuFb" target="_blank" rel="noopener">
+        <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/3Prancheta_11.png?v=1741771978" alt="Apple Maps">
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var section = document.getElementById('wedding-details');
+  if (!section) return;
+
+  function show(){ section.classList.add('is-visible'); }
+
+  function isInView(el){
+    var r = el.getBoundingClientRect();
+    return (r.top < window.innerHeight && r.bottom > 0);
+  }
+
+  if (isInView(section)) {
+    show();
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    show();
+    return;
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        show();
+        observer.unobserve(section);
+      }
+    });
+  }, { threshold: 0.01 });
+
+  observer.observe(section);
+
+  var localTrigger = section.querySelector('.details-local-trigger');
+  if (localTrigger) {
+    localTrigger.addEventListener('click', function() {
+      var nextSection = section.nextElementSibling;
+      while (nextSection && nextSection.nodeType === 1) {
+        var tag = (nextSection.tagName || '').toLowerCase();
+        if (tag !== 'script' && tag !== 'style') break;
+        nextSection = nextSection.nextElementSibling;
+      }
+      if (!nextSection) return;
+
+      var rect = nextSection.getBoundingClientRect();
+      var offset = rect.top + window.pageYOffset;
+
+      window.scrollTo({
+        top: offset,
+        behavior: 'smooth'
+      });
+    });
+  }
+})();
+</script>
+
+<style>
+.break-icon-inline {
+  background:#f1ecce;
+  padding:16px 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.break-icon-inline img {
+  max-width:120px;
+  width:100%;
+  height:auto;
+  display:block;
+  opacity:0;
+  transform:translateY(20px);
+  animation:fadeUp .65s ease forwards;
+  will-change:opacity, transform;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+</style>
+
+<div class="break-icon-inline">
+  <img
+    src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/qebra.png?v=1766432267"
+    alt="Separador"
+    loading="eager"
+    decoding="async"
+  >
+</div>
+
+<style>
+.quinta-section {
+  background:#f1ecce;
+  padding:clamp(40px,8vw,80px) 20px 60px;
+  display:flex;
+  justify-content:center;
+}
+
+.quinta-inner{
+  max-width:1100px;
+  width:40%;
+  margin:0 auto;
+  display:flex;
+  gap:clamp(30px,6vw,60px);
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+@media (max-width:1100px){
+  .quinta-inner{width:min(92%,1100px)}
+}
+
+@media (max-width:600px){
+  .quinta-inner{width:100%}
+  .quinta-media,.quinta-text{flex:1 1 100%}
+}
+
+
+/* header (titulo + subtitulo) acima das imagens */
+.quinta-header {
+  width:100%;
+  text-align:center;
+  opacity:0;
+  transform:translateY(30px);
+}
+
+.quinta-title {
+  font-size:clamp(1.8rem,3vw,2.4rem);
+  margin:0 0 .25em;
+}
+
+.quinta-subtitle {
+  font-size:clamp(1rem,2vw,1.1rem);
+  font-weight:300;
+  margin:0;
+}
+
+/* media grid */
+.quinta-media {
+  flex:1 1 420px;
+  opacity:0;
+  transform:translateY(30px);
+}
+
+.quinta-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  grid-auto-rows:minmax(110px,1fr);
+  gap:12px;
+}
+
+.quinta-grid-item {
+  position:relative;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 10px 24px rgba(0,0,0,0.15);
+  transition:transform .25s ease, box-shadow .25s ease;
+  cursor:pointer;
+}
+
+.quinta-grid-item img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.quinta-grid-item:nth-child(1) {
+  grid-column:1 / 3;
+  grid-row:1 / 3;
+}
+
+.quinta-grid-item:nth-child(2) {
+  grid-column:1 / 2;
+  grid-row:3 / 4;
+}
+
+.quinta-grid-item:nth-child(3) {
+  grid-column:2 / 3;
+  grid-row:3 / 4;
+}
+
+.quinta-grid-item:nth-child(4) {
+  grid-column:1 / 2;
+  grid-row:4 / 5;
+}
+
+.quinta-grid-item:nth-child(5) {
+  grid-column:2 / 3;
+  grid-row:4 / 5;
+}
+
+.quinta-grid-item:hover {
+  transform:translateY(-4px);
+  box-shadow:0 14px 30px rgba(0,0,0,0.2);
+}
+
+/* texto */
+.quinta-text {
+  flex:1 1 340px;
+  opacity:0;
+  transform:translateY(30px);
+  text-align:left;
+}
+
+.quinta-body {
+  font-size:clamp(0.98rem,1.9vw,1.05rem);
+  line-height:1.6;
+  margin:0 0 1.4em;
+}
+
+.quinta-list {
+  list-style:none;
+  padding:0;
+  margin:0 0 1.8em;
+  font-size:clamp(0.98rem,1.9vw,1.05rem);
+}
+
+.quinta-list li {
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.quinta-bullet-icon {
+  font-size:1.1em;
+  line-height:1;
+  flex-shrink:0;
+}
+
+/* botão centrado relativamente ao bloco de texto */
+.quinta-btn-wrap {
+  display:flex;
+  justify-content:center;
+}
+
+.quinta-btn {
+  display:inline-block;
+  background:#92aa97;
+  color:#fff;
+  padding:.9em 2.4em;
+  border-radius:14px;
+  text-decoration:none;
+  font-size:1.02rem;
+  transition:background .25s ease;
+}
+
+.quinta-btn:hover {
+  background:#7a9480;
+}
+
+/* animação */
+@keyframes fadeUpQuinta {
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.quinta-section.is-visible .quinta-header {
+  animation:fadeUpQuinta 1s ease .35s forwards;
+}
+
+.quinta-section.is-visible .quinta-media {
+  animation:fadeUpQuinta 1s ease .5s forwards;
+}
+
+.quinta-section.is-visible .quinta-text {
+  animation:fadeUpQuinta 1s ease .85s forwards;
+}
+
+/* modal preview */
+.quinta-modal {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+}
+
+.quinta-modal.is-open {
+  display:flex;
+}
+
+.quinta-modal-inner {
+  position:relative;
+  max-width:90vw;
+  max-height:90vh;
+}
+
+.quinta-modal-img {
+  max-width:100%;
+  max-height:100%;
+  display:block;
+  border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.quinta-modal-close {
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:32px;
+  height:32px;
+  border-radius:999px;
+  border:none;
+  background:rgba(146,170,151,0.8);
+  color:#fff;
+  cursor:pointer;
+  font-size:1.3rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* responsive */
+@media (max-width:900px) {
+  .quinta-inner {
+    flex-direction:column;
+  }
+
+  .quinta-media {
+    order:2;
+  }
+
+  .quinta-text {
+    order:3;
+  }
+
+  .quinta-list li {
+    justify-content:flex-start;
+  }
+}
+
+@media (max-width:600px) {
+  .quinta-section {
+    padding:32px 16px 40px;
+  }
+
+  .quinta-grid {
+    grid-auto-rows:minmax(90px,1fr);
+    gap:8px;
+  }
+}
+</style>
+
+<section class="quinta-section" id="quinta-falesia">
+  <div class="quinta-inner">
+
+    <div class="quinta-header">
+      <h2 class="quinta-title">Quinta da Falésia</h2>
+      <p class="quinta-subtitle">O sítio que escolhemos para passar o nosso dia - Para se inspirarem nos vossos looks</p>
+    </div>
+
+    <div class="quinta-media">
+      <div class="quinta-grid">
+        <div class="quinta-grid-item">
+          <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/fin5.png?v=1766335158" alt="Quinta da Falésia vista geral">
+        </div>
+        <div class="quinta-grid-item">
+          <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/fin2.png?v=1766335157" alt="Zona exterior da Quinta da Falésia">
+        </div>
+        <div class="quinta-grid-item">
+          <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/fin3.png?v=1766335157" alt="Espaço para cerimónia na Quinta da Falésia">
+        </div>
+        <div class="quinta-grid-item">
+          <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/fin4.png?v=1766335157" alt="Sala de copo de água na Quinta da Falésia">
+        </div>
+        <div class="quinta-grid-item">
+          <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/fin1.png?v=1766335157" alt="Detalhes da Quinta da Falésia">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="quinta-modal" id="quintaModal">
+  <div class="quinta-modal-inner">
+    <button class="quinta-modal-close" type="button" aria-label="Fechar imagem">&times;</button>
+    <img class="quinta-modal-img" src="" alt="">
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var quintaSection = document.getElementById('quinta-falesia');
+  var modal = document.getElementById('quintaModal');
+  var modalImg = modal ? modal.querySelector('.quinta-modal-img') : null;
+  var modalClose = modal ? modal.querySelector('.quinta-modal-close') : null;
+
+  if (!quintaSection) return;
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          quintaSection.classList.add('is-visible');
+          observer.unobserve(quintaSection);
+        }
+      });
+    }, { threshold:0.2 });
+
+    observer.observe(quintaSection);
+  } else {
+    quintaSection.classList.add('is-visible');
+  }
+
+  if (modal && modalImg) {
+    var thumbs = quintaSection.querySelectorAll('.quinta-grid-item img');
+
+    thumbs.forEach(function(img) {
+      img.addEventListener('click', function() {
+        modalImg.src = img.src;
+        modalImg.alt = img.alt || '';
+        modal.classList.add('is-open');
+      });
+    });
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      modalImg.src = '';
+      modalImg.alt = '';
+    }
+
+    if (modalClose) {
+      modalClose.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeModal();
+      });
+    }
+
+    modal.addEventListener('click', function() {
+      closeModal();
+    });
+
+    var inner = modal.querySelector('.quinta-modal-inner');
+    if (inner) {
+      inner.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+        closeModal();
+      }
+    });
+  }
+});
+</script>
+
+<style>
+.break-icon-inline {
+  background:#f1ecce;
+  padding:16px 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.break-icon-inline img {
+  max-width:120px;
+  width:100%;
+  height:auto;
+  display:block;
+  opacity:0;
+  transform:translateY(20px);
+  animation:fadeUp .65s ease forwards;
+  will-change:opacity, transform;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+</style>
+
+<div class="break-icon-inline">
+  <img
+    src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/qebra.png?v=1766432267"
+    alt="Separador"
+    loading="eager"
+    decoding="async"
+  >
+</div>
+
+<style>
+.accommodation-section {
+  background:#f1ecce;
+  padding:clamp(40px,8vw,80px) 20px 60px;
+  display:flex;
+  justify-content:center;
+}
+
+.accommodation-inner{
+  max-width:1100px;
+  width:40%;
+  margin:0 auto;
+}
+
+@media (max-width:1100px){
+  .accommodation-inner{width:min(92%,1100px)}
+}
+
+@media (max-width:600px){
+  .accommodation-inner{width:100%}
+}
+
+
+/* header */
+.acc-header {
+  text-align:center;
+  margin:0 0 24px;
+}
+
+.acc-title {
+  font-size:clamp(1.8rem,3vw,2.4rem);
+  margin:0 0 6px;
+  opacity:0;
+  transform:translateY(25px);
+}
+
+.acc-subtitle {
+  font-size:clamp(0.95rem,1.8vw,1.05rem);
+  font-weight:300;
+  margin:0;
+  opacity:0;
+  transform:translateY(25px);
+}
+
+/* carrossel */
+.acc-carousel-wrap {
+  position:relative;
+  max-width:900px;
+  margin:0 auto;
+  overflow-x:hidden;   /* só corta na horizontal */
+  overflow-y:visible;  /* deixa a sombra sair em baixo */
+  opacity:0;
+  transform:translateY(25px);
+}
+
+.acc-carousel {
+  display:flex;
+  transition:transform .5s ease;
+  will-change:transform;
+}
+
+.acc-slide {
+  min-width:100%;
+  box-sizing:border-box;
+  padding:0 4px 8px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.acc-img-link {
+  display:block;
+  width:100%;
+  text-decoration:none;
+}
+
+/* imagem + overlays */
+.acc-img-wrapper {
+  position:relative;
+  width:100%;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 3px 3px rgba(0,0,0,.18);
+  transition:transform .25s ease;
+}
+
+.acc-img-wrapper img {
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+/* badge capacidade */
+.acc-capacity-badge {
+  position:absolute;
+  top:10px;
+  left:10px;
+  padding:4px 9px;
+  border-radius:999px;
+  background:rgba(146,170,151,0.7); /* 70% opacity */
+  color:#fff;
+  font-size:0.8rem;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  transform-origin:left center;
+  transition:transform .25s ease;
+}
+
+.acc-capacity-icon img {
+  width:13px;
+  height:13px;
+  display:block;
+}
+
+/* titulo da propriedade sobreposto */
+.acc-title-overlay {
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:12px;
+  background:rgba(146,170,151,0.7); /* 70% opacity */
+  border-radius:14px;
+  padding:10px 16px;
+  color:#fff;
+  font-size:clamp(1.1rem,2.1vw,1.25rem);
+  font-weight:700;
+  text-align:center;
+  transform-origin:center;
+  transition:transform .25s ease;
+}
+
+/* hover zoom */
+.acc-img-wrapper:hover .acc-capacity-badge,
+.acc-img-wrapper:hover .acc-title-overlay {
+  transform:scale(1.08);
+}
+
+/* setas desktop */
+.acc-arrow {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:40px;
+  height:40px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.55);
+  color:#fff;
+  font-size:1.3rem;
+  transition:background .25s ease, transform .25s ease, box-shadow .25s ease;
+  z-index:5;
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
+
+.acc-arrow-left { left:14px; }
+.acc-arrow-right { right:14px; }
+
+.acc-arrow:hover {
+  background:rgba(0,0,0,0.85);
+  transform:translateY(-50%) scale(1.06);
+}
+
+/* animação base */
+@keyframes fadeUpSoft {
+  to { opacity:1; transform:translateY(0); }
+}
+
+.accommodation-section.is-visible .acc-title,
+.accommodation-section.is-visible .acc-subtitle {
+  animation:fadeUpSoft .9s ease .5s forwards;
+}
+
+.accommodation-section.is-visible .acc-carousel-wrap {
+  animation:fadeUpSoft 1s ease 1s forwards;
+}
+
+/* mobile */
+@media (max-width:768px) {
+  .accommodation-section {
+    padding:30px 14px 40px;
+  }
+
+  .acc-arrow {
+    display:none;
+  }
+
+  .acc-title-overlay {
+    left:10px;
+    right:10px;
+    bottom:10px;
+  }
+}
+
+/* desktop */
+@media (min-width:769px) {
+  .acc-slide {
+    padding:0 24px 8px;
+  }
+}
+</style>
+
+<section class="accommodation-section" id="accommodation-section">
+  <div class="accommodation-inner">
+    <div class="acc-header">
+      <h2 class="acc-title">Acomodação</h2>
+      <p class="acc-subtitle">Algumas sugestões para quem precisa de sítio para ficar:</p>
+    </div>
+
+    <div class="acc-carousel-wrap">
+      <button class="acc-arrow acc-arrow-left" type="button">&#10094;</button>
+      <button class="acc-arrow acc-arrow-right" type="button">&#10095;</button>
+
+      <div class="acc-carousel" id="accCarousel">
+
+        <!-- slide 1 -->
+        <div class="acc-slide">
+          <a class="acc-img-link" href="https://www.booking.com/hotel/pt/crowne-plaza-caparica-lisboa.pt-pt.html" target="_blank">
+            <div class="acc-img-wrapper">
+              <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/crown-plaze.png?v=1766322633" alt="Crowne Plaza Caparica Lisboa">
+              <div class="acc-capacity-badge">
+                <span class="acc-capacity-icon">
+                  <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/user-icon.png?v=1766323579" alt="Hóspedes">
+                </span>2-4
+              </div>
+              <div class="acc-title-overlay">Crowne Plaza Caparica Lisboa</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- slide 2 -->
+        <div class="acc-slide">
+          <a class="acc-img-link" href="https://www.booking.com/hotel/pt/hotelcostadacaparica.pt-pt.html" target="_blank">
+            <div class="acc-img-wrapper">
+              <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/tryp.png?v=1766322795" alt="Tryp by Wyndham Lisboa Caparica Mar">
+              <div class="acc-capacity-badge">
+                <span class="acc-capacity-icon">
+                  <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/user-icon.png?v=1766323579" alt="Hóspedes">
+                </span>2-5
+              </div>
+              <div class="acc-title-overlay">Tryp by Wyndham Lisboa Caparica Mar</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- slide 3 -->
+        <div class="acc-slide">
+          <a class="acc-img-link" href="https://www.booking.com/hotel/pt/lisboa-almada-hotel.pt-pt.html" target="_blank">
+            <div class="acc-img-wrapper">
+              <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/mercure.png?v=1766322905" alt="Mercure Lisboa Almada">
+              <div class="acc-capacity-badge">
+                <span class="acc-capacity-icon">
+                  <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/user-icon.png?v=1766323579" alt="Hóspedes">
+                </span>2-4
+              </div>
+              <div class="acc-title-overlay">Mercure Lisboa Almada</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- slide 4 -->
+        <div class="acc-slide">
+          <a class="acc-img-link" href="https://www.airbnb.pt/rooms/944327008368209825" target="_blank">
+            <div class="acc-img-wrapper">
+              <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/yo-house.png?v=1766322511" alt="Yo-House">
+              <div class="acc-capacity-badge">
+                <span class="acc-capacity-icon">
+                  <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/user-icon.png?v=1766323579" alt="Hóspedes">
+                </span>2-10
+              </div>
+              <div class="acc-title-overlay">Yo-House</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- slide 5 -->
+        <div class="acc-slide">
+          <a class="acc-img-link" href="https://desportosnauticosalvor.com/pages/casamento" target="_blank">
+            <div class="acc-img-wrapper">
+              <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/default.png?v=1766323042" alt="Hotel/Casa">
+              <div class="acc-capacity-badge">
+                <span class="acc-capacity-icon">
+                  <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/user-icon.png?v=1766323579" alt="Hóspedes">
+                </span>x-y
+              </div>
+              <div class="acc-title-overlay">Hotel/Casa</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- slide 6 -->
+        <div class="acc-slide">
+          <a class="acc-img-link" href="https://desportosnauticosalvor.com/pages/casamento" target="_blank">
+            <div class="acc-img-wrapper">
+              <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/default.png?v=1766323042" alt="Hotel/Casa2">
+              <div class="acc-capacity-badge">
+                <span class="acc-capacity-icon">
+                  <img src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/user-icon.png?v=1766323579" alt="Hóspedes">
+                </span>x-y
+              </div>
+              <div class="acc-title-overlay">Hotel/Casa2</div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var section = document.getElementById('accommodation-section');
+  var carousel = document.getElementById('accCarousel');
+  if (!section || !carousel) return;
+
+  var slides = carousel.querySelectorAll('.acc-slide');
+  var total = slides.length;
+  var index = 0;
+
+  function goTo(i) {
+    index = (i + total) % total;
+    carousel.style.transform = 'translateX(' + (-index * 100) + '%)';
+  }
+
+  var prevBtn = section.querySelector('.acc-arrow-left');
+  var nextBtn = section.querySelector('.acc-arrow-right');
+
+  if (prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', function() { goTo(index - 1); });
+    nextBtn.addEventListener('click', function() { goTo(index + 1); });
+  }
+
+  /* swipe mobile */
+  var startX = null;
+  var threshold = 40;
+
+  carousel.addEventListener('touchstart', function(e) {
+    if (e.touches && e.touches.length === 1) {
+      startX = e.touches[0].clientX;
+    }
+  });
+
+  carousel.addEventListener('touchend', function(e) {
+    if (startX === null) return;
+    var diff = e.changedTouches[0].clientX - startX;
+    if (diff > threshold) goTo(index - 1);
+    else if (diff < -threshold) goTo(index + 1);
+    startX = null;
+  });
+
+  /* scroll animation */
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          section.classList.add('is-visible');
+          observer.unobserve(section);
+        }
+      });
+    }, { threshold:0.2 });
+    observer.observe(section);
+  } else {
+    section.classList.add('is-visible');
+  }
+});
+</script>
+
+<style>
+.break-icon-inline {
+  background:#f1ecce;
+  padding:16px 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.break-icon-inline img {
+  max-width:120px;
+  width:100%;
+  height:auto;
+  display:block;
+  opacity:0;
+  transform:translateY(20px);
+  animation:fadeUp .65s ease forwards;
+  will-change:opacity, transform;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+</style>
+
+<div class="break-icon-inline">
+  <img
+    src="https://cdn.shopify.com/s/files/1/0818/0554/1723/files/qebra.png?v=1766432267"
+    alt="Separador"
+    loading="eager"
+    decoding="async"
+  >
+</div>
+
