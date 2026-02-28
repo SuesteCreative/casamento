@@ -12,7 +12,7 @@
   <link rel="preload" as="image" href="imagens/logo-head.webp" />
   <link rel="preload" as="font" href="fonts/against-Regular.woff2" type="font/woff2" crossorigin />
 
-  <link rel="stylesheet" href="styles.css?v=2.4" />
+  <link rel="stylesheet" href="styles.css?v=2.5" />
   <link rel="icon" type="image/webp" href="imagens/fav-icon.webp">
 </head>
 
@@ -203,7 +203,10 @@
 
       <div class="ugc-toolbar">
         <span class="results-text">Fotos partilhadas: <span id="photoCount">0</span></span>
-        <button class="sort-toggle" id="btnSort">Recentes primeiro</button>
+        <select class="sort-select" id="sortGallery">
+          <option value="recent">Recentes primeiro</option>
+          <option value="oldest">Antigas primeiro</option>
+        </select>
       </div>
 
       <div class="ugc-grid" id="photoGrid">
@@ -220,8 +223,11 @@
       <div class="modal-body">
         <img class="modal-img" src="" alt="Destaque" />
         <div class="modal-caption-bar">
-          <div class="caption-title"></div>
-          <div class="caption-author"></div>
+          <div class="caption-content">
+            <div class="caption-title"></div>
+            <div class="caption-author"></div>
+          </div>
+          <button class="btn-delete-pill" id="btnDeleteMedia">Remover</button>
         </div>
       </div>
     </div>
@@ -257,7 +263,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=2.4" defer></script>
+  <script src="script.js?v=2.5" defer></script>
 </body>
 
 </html>

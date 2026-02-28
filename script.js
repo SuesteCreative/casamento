@@ -163,14 +163,12 @@ async function initGallery() {
       const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
 
       grid.innerHTML = photos.map(p => {
-        const canDelete = myUploads.includes(p.id);
         const title = p.title || 'Recordação';
         const author = p.author ? `@${p.author}` : '';
 
         return `
-          <article class="gallery-item reveal-on ${canDelete ? 'can-delete' : ''}" 
+          <article class="gallery-item reveal-on" 
                    data-id="${p.id}" data-path="${p.path}" data-author="${p.author || ''}" data-title="${title}">
-            <button class="btn-delete-item" onclick="deleteMyPhoto(event, ${p.id}, '${p.path}')" title="Remover minha foto">&times;</button>
             <img src="${p.public_url}" alt="${title}" loading="lazy" 
                  onclick="openGalleryModal(this)"
                  onerror="this.closest('.gallery-item').remove(); updateLoadedCount();" 
@@ -345,18 +343,29 @@ function openGalleryModal(img) {
   const modalImg = $('.modal-img', modal);
   const titleEl = $('.caption-title', modal);
   const authorEl = $('.caption-author', modal);
+  const deleteBtn = $('#btnDeleteMedia');
 
   modalImg.src = img.src;
   if (titleEl) titleEl.innerText = card.dataset.title || '';
   if (authorEl) authorEl.innerText = card.dataset.author ? `Por: ${card.dataset.author}` : '';
+
+  // Check ownership
+  const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
+  const isOwner = myUploads.includes(parseInt(card.dataset.id)) || myUploads.includes(card.dataset.id);
+
+  modal.classList.toggle('is-owner', isOwner);
+
+  if (deleteBtn) {
+    // Re-bind delete logic to this specific item
+    deleteBtn.onclick = () => deleteMyPhoto(card.dataset.id, card.dataset.path);
+  }
 
   modal.classList.add('is-open');
   document.body.style.overflow = 'hidden';
 }
 
 /* --- SELF-DELETE UTILS --- */
-async function deleteMyPhoto(event, id, path) {
-  event.stopPropagation();
+async function deleteMyPhoto(id, path) {
   if (!confirm("Queres mesmo remover esta foto?")) return;
 
   try {
@@ -371,11 +380,17 @@ async function deleteMyPhoto(event, id, path) {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
     });
 
-    // 3. Remove from local list
     const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
     localStorage.setItem('wedding_my_ids', JSON.stringify(myIds.filter(i => String(i) !== String(id))));
 
-    // 4. UI Feedback
+    // Close modal
+    const modal = $('.modal.is-open');
+    if (modal) {
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    // Remove from UI
     const el = document.querySelector(`.gallery-item[data-id="${id}"]`);
     if (el) el.remove();
     updateLoadedCount();

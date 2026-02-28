@@ -506,24 +506,8 @@ section {
 }
 
 .btn-delete-item {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 32px;
-  /* Slightly bigger */
-  height: 32px;
-  background: rgba(255, 64, 64, 0.9);
-  color: #fff;
-  font-size: 1.4rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 25;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  opacity: 1;
-  /* Always visible if can-delete */
-  transition: transform 0.2s;
+  display: none !important;
+  /* Removed from grid */
 }
 
 .gallery-item:not(.can-delete) .btn-delete-item {
@@ -565,10 +549,9 @@ section {
 .ugc-toolbar {
   display: flex;
   justify-content: space-between;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--glass-border);
+  align-items: center;
   margin-bottom: var(--gap-md);
-  font-size: 0.9rem;
+  padding: 0 10px;
 }
 
 .ugc-grid {
@@ -606,15 +589,14 @@ section {
 .modal-container {
   position: relative;
   background: var(--clr-bg);
-  padding: var(--gap-md);
-  /* Added padding for non-image modals */
+  padding: 0;
   border-radius: var(--radius);
-  width: 95vw;
-  max-width: 650px;
-  /* Wider for forms as requested */
-  max-height: 90vh;
+  width: min(700px, 95vw);
+  max-height: 95vh;
   z-index: 10;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
@@ -679,47 +661,75 @@ section {
 }
 
 .modal-body {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  /* Stack image and caption */
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
   padding: 40px 20px 20px;
+  min-height: 0;
+  /* Important for flex child */
+  overflow: hidden;
 }
 
 .modal-img {
   max-width: 100%;
-  max-height: 70vh;
-  /* Leave room for caption */
+  max-height: 60vh;
+  /* Adjust to fit everything */
   object-fit: contain;
   border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .modal-caption-bar {
   width: 100%;
-  max-width: 600px;
   margin-top: 1.5rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.03);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.caption-content {
+  flex: 1;
+  text-align: left;
 }
 
 .caption-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--clr-ink);
-  margin-bottom: 0.25rem;
 }
 
 .caption-author {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   opacity: 0.7;
   color: var(--clr-ink);
+}
+
+.btn-delete-pill {
+  background: #ffecf0;
+  color: #ff4757;
+  border: 1px solid #ffcad1;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  display: none;
+  /* JS will show it */
+}
+
+.btn-delete-pill:hover {
+  background: #ff4757;
+  color: #fff;
+}
+
+.modal.is-owner .btn-delete-pill {
+  display: block;
 }
 
 .modal-close {
