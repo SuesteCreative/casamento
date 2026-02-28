@@ -1,381 +1,237 @@
 <!doctype html>
 <html lang="pt-PT">
+
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Casamento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rita & Pedro | 18.07.2026</title>
+  <meta name="description"
+    content="Bem-vindos ao site oficial do casamento de Rita & Pedro. Detalhes, acomodação e memórias.">
 
-  <link rel="preload" as="image" href="imagens/logo-head.png" />
-
+  <!-- Preloads -->
+  <link rel="preload" as="image" href="imagens/logo-head.webp" />
   <link rel="preload" as="font" href="fonts/against-Regular.woff2" type="font/woff2" crossorigin />
-  <link rel="preload" as="font" href="fonts/against-Regular.woff" type="font/woff" crossorigin />
 
   <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/webp" href="imagens/fav-icon.webp">
 </head>
 
 <body class="wedding-page theme-green">
+  <!-- Interactive Daisy Background -->
   <div id="daisy-layer" aria-hidden="true"></div>
+
   <main>
-
-    <section class="banner-section" aria-label="Topo">
-      <img
-        class="banner-logo banner-logo--sm"
-        src="imagens/logo-head.png"
-        alt="Rita e Pedro"
-        loading="eager"
-        decoding="async"
-      />
-    </section>
-
-    <section class="two-col-section reveal-on" data-reveal="load" data-delay="1" id="section-2">
-      <div class="left-half">
-        <div class="img-swap img-swap--hover reveal-item" data-st="1" id="swapWrap-2" role="button" tabindex="0" aria-label="Ver outra versão do desenho">
-          <img class="swap-base" src="imagens/outline2.2.png" alt="Ilustração" loading="eager" decoding="async" />
-          <img class="swap-overlay" src="imagens/outline1.png" alt="Ilustração (variante)" loading="eager" decoding="async" />
-        </div>
+    <!-- Header Banner -->
+    <header class="banner-section">
+      <div class="banner-inner container">
+        <img class="banner-logo" src="imagens/logo-head.webp" alt="Rita & Pedro" loading="eager" width="400"
+          height="150" />
       </div>
+    </header>
 
-      <div class="right-half">
-        <h2 class="reveal-item font-against" data-st="2">
-          <span class="main-line">Um espaço para partilharmos os detalhes do nosso dia</span>
-        </h2>
+    <!-- Intro Section -->
+    <section class="hero-section container reveal-on" id="intro">
+      <div class="hero-grid">
+        <div class="hero-image-wrap">
+          <div class="img-swap" id="swapWrap-2" role="button" tabindex="0" aria-label="Alterar ilustração">
+            <img class="swap-base" src="imagens/outline2.2.webp" alt="Ilustração do casal" loading="eager" />
+            <img class="swap-overlay" src="imagens/outline1.webp" alt="Variação da ilustração" loading="eager" />
+          </div>
+        </div>
 
-        <div class="countdown-wrapper countdown-wrapper--clean reveal-item" data-st="3" id="wedding-countdown-2">
-          <p class="countdown-label-top">Faltam:</p>
+        <div class="hero-content">
+          <h1 class="hero-title font-against">
+            Um espaço para partilharmos os detalhes do nosso dia
+          </h1>
 
-          <div class="countdown-row" aria-label="Contagem decrescente">
-            <div class="cd-item">
-              <span id="cd-days-2" class="cd-value">00</span>
-              <span class="cd-unit">dias</span>
-            </div>
-            <div class="cd-item">
-              <span id="cd-hours-2" class="cd-value">00</span>
-              <span class="cd-unit">horas</span>
-            </div>
-            <div class="cd-item">
-              <span id="cd-mins-2" class="cd-value">00</span>
-              <span class="cd-unit">minutos</span>
-            </div>
-            <div class="cd-item">
-              <span id="cd-secs-2" class="cd-value">00</span>
-              <span class="cd-unit">segundos</span>
+          <div class="countdown-card" id="wedding-countdown">
+            <p class="countdown-label">Faltam:</p>
+            <div class="countdown-display" aria-label="Tempo restante">
+              <div class="cd-slot"><span id="cd-days" class="cd-val">00</span><small>dias</small></div>
+              <div class="cd-slot"><span id="cd-hours" class="cd-val">00</span><small>horas</small></div>
+              <div class="cd-slot"><span id="cd-mins" class="cd-val">00</span><small>minutos</small></div>
+              <div class="cd-slot"><span id="cd-secs" class="cd-val">00</span><small>segundos</small></div>
             </div>
           </div>
 
-          <p class="countdown-extra">
-            Confirma a tua presença até ao dia 1 de Maio de 2026, respondendo ao questionário:
-          </p>
+          <div class="cta-wrap">
+            <p class="cta-text">Confirma a tua presença até 1 de Maio de 2026:</p>
+            <a href="https://docs.google.com/forms/d/1wpmmkwjknMAZgNd1Ka5x_Ohs9oa1Jc9ocBuCv-n3F3k/"
+              class="btn btn-primary" target="_blank" rel="noopener">Responder ao Formulário</a>
+          </div>
         </div>
-
-        <a
-          class="form-btn reveal-item"
-          data-st="4"
-          href="https://docs.google.com/forms/d/1wpmmkwjknMAZgNd1Ka5x_Ohs9oa1Jc9ocBuCv-n3F3k/"
-          target="_blank"
-          rel="noopener"
-        >Formulário</a>
       </div>
     </section>
 
-    <div class="break-icon-inline break-icon-inline--lg" aria-hidden="true">
-      <img class="break-icon-img" src="imagens/qebra.png" alt="" loading="eager" decoding="async" />
-    </div>
+    <hr class="section-divider" aria-hidden="true" />
 
-    <section class="details-section" id="wedding-details">
-      <div class="details-inner">
-        <div class="details-text">
-          <h2 class="details-title font-against">Detalhes</h2>
-
+    <!-- Details Section -->
+    <section class="details-section container" id="detalhes">
+      <div class="details-grid">
+        <div class="details-info">
+          <h2 class="section-title font-against">Detalhes</h2>
           <ul class="details-list">
             <li>
-              <span class="details-icon" aria-hidden="true">📍</span>
-              <button type="button" class="details-text-line details-local-trigger">
-                <strong>Local:</strong> Quinta da Falésia
-              </button>
+              <span class="icon">📍</span>
+              <div>
+                <strong>Local:</strong>
+                <button type="button" class="link-trigger">Quinta da Falésia</button>
+              </div>
             </li>
-
             <li>
-              <span class="details-icon" aria-hidden="true">📅</span>
-              <span class="details-text-line"><strong>Dia:</strong> 18 de Julho de 2026</span>
+              <span class="icon">📅</span>
+              <div><strong>Dia:</strong> 18 de Julho de 2026</div>
             </li>
-
             <li>
-              <span class="details-icon" aria-hidden="true">⏰</span>
-              <span class="details-text-line"><strong>Hora:</strong> 15h30</span>
+              <span class="icon">⏰</span>
+              <div><strong>Hora:</strong> 15h30</div>
             </li>
-
-            <li class="details-break">
-              <span class="details-icon" aria-hidden="true">🗺️</span>
-              <span class="details-text-line">
-                <strong>Morada:</strong> R. dos Zimbros 8, 2820-007 Charneca de Caparica
-              </span>
+            <li>
+              <span class="icon">🗺️</span>
+              <div>
+                <strong>Morada:</strong><br>
+                R. dos Zimbros 8, 2820-007 Charneca de Caparica
+              </div>
             </li>
           </ul>
+
+          <div class="map-links">
+            <a href="https://ul.waze.com/ul?place=ChIJP_oMeAC1Hg0RdDKbTzFYm7k&ll=38.61662190%2C-9.20569320&navigate=yes"
+              class="map-btn waze" target="_blank" title="Abrir no Waze">
+              <img src="imagens/3Prancheta_10.webp" alt="Waze" width="40" height="40" />
+            </a>
+            <a href="https://maps.app.goo.gl/AMe48eKfDLM3Ybna9" class="map-btn google" target="_blank"
+              title="Abrir no Google Maps">
+              <img src="imagens/3Prancheta_12.webp" alt="Google Maps" width="40" height="40" />
+            </a>
+            <a href="https://maps.apple/r/IeFYpZ4k8_SuFb" class="map-btn apple" target="_blank"
+              title="Abrir no Apple Maps">
+              <img src="imagens/3Prancheta_11.webp" alt="Apple Maps" width="40" height="40" />
+            </a>
+          </div>
         </div>
 
-        <div class="details-map">
-          <div class="map-frame-wrap">
+        <div class="details-media">
+          <div class="map-wrapper">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d36491.11427398107!2d-9.202867886893683!3d38.620556007523106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1eb500780cfa3f%3A0xb99b58314f9b3274!2sQuinta%20da%20Fal%C3%A9sia!5e1!3m2!1spt-PT!2spt!4v1766319399864!5m2!1spt-PT!2spt"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              allowfullscreen
-              title="Mapa Quinta da Falésia"
-            ></iframe>
-          </div>
-        </div>
-
-        <div class="details-links" aria-label="Abrir em aplicações de mapas">
-          <a class="details-link details-link--icon" href="https://ul.waze.com/ul?place=ChIJP_oMeAC1Hg0RdDKbTzFYm7k&ll=38.61662190%2C-9.20569320&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" target="_blank" rel="noopener">
-            <img class="details-link-img" src="imagens/3Prancheta_10.png" alt="Waze" loading="lazy" decoding="async" />
-          </a>
-          <a class="details-link details-link--icon" href="https://maps.app.goo.gl/AMe48eKfDLM3Ybna9" target="_blank" rel="noopener">
-            <img class="details-link-img" src="imagens/3Prancheta_12.png" alt="Google Maps" loading="lazy" decoding="async" />
-          </a>
-          <a class="details-link details-link--icon" href="https://maps.apple/r/IeFYpZ4k8_SuFb" target="_blank" rel="noopener">
-            <img class="details-link-img" src="imagens/3Prancheta_11.png" alt="Apple Maps" loading="lazy" decoding="async" />
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <div class="break-icon-inline break-icon-inline--lg" aria-hidden="true">
-      <img class="break-icon-img" src="imagens/qebra.png" alt="" loading="eager" decoding="async" />
-    </div>
-
-    <section class="quinta-section" id="quinta-falesia">
-      <div class="quinta-inner">
-
-        <header class="quinta-header">
-          <h2 class="quinta-title font-against">Quinta da Falésia</h2>
-          <p class="quinta-subtitle">O sítio que escolhemos para passar o nosso dia. Para se inspirarem nos vossos looks</p>
-        </header>
-
-        <div class="quinta-media">
-          <div class="quinta-grid" aria-label="Galeria Quinta da Falésia">
-            <button class="quinta-grid-item" type="button">
-              <img src="imagens/fin5.png" alt="Quinta da Falésia vista geral" loading="lazy" decoding="async" />
-            </button>
-            <button class="quinta-grid-item" type="button">
-              <img src="imagens/fin2.png" alt="Zona exterior da Quinta da Falésia" loading="lazy" decoding="async" />
-            </button>
-            <button class="quinta-grid-item" type="button">
-              <img src="imagens/fin3.png" alt="Espaço para cerimónia na Quinta da Falésia" loading="lazy" decoding="async" />
-            </button>
-            <button class="quinta-grid-item" type="button">
-              <img src="imagens/fin4.png" alt="Sala de copo de água na Quinta da Falésia" loading="lazy" decoding="async" />
-            </button>
-            <button class="quinta-grid-item" type="button">
-              <img src="imagens/fin1.png" alt="Detalhes da Quinta da Falésia" loading="lazy" decoding="async" />
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <div class="quinta-modal" id="quintaModal" aria-hidden="true">
-      <div class="quinta-modal-inner" role="dialog" aria-modal="true" aria-label="Pré-visualização da imagem">
-        <button class="quinta-modal-close" type="button" aria-label="Fechar imagem">&times;</button>
-        <img class="quinta-modal-img" src="" alt="" />
-      </div>
-    </div>
-
-    <div class="break-icon-inline break-icon-inline--lg" aria-hidden="true">
-      <img class="break-icon-img" src="imagens/qebra.png" alt="" loading="eager" decoding="async" />
-    </div>
-
-    <section class="accommodation-section" id="accommodation-section">
-      <div class="accommodation-inner">
-        <header class="acc-header">
-          <h2 class="acc-title font-against">Acomodação</h2>
-          <p class="acc-subtitle">Algumas sugestões para quem precisa de sítio para ficar:</p>
-        </header>
-
-        <div class="acc-carousel-wrap" data-carousel>
-          <button class="acc-arrow acc-arrow-left" type="button" aria-label="Anterior" data-acc-prev>&#10094;</button>
-          <button class="acc-arrow acc-arrow-right" type="button" aria-label="Seguinte" data-acc-next>&#10095;</button>
-
-          <div class="acc-viewport">
-            <div class="acc-carousel" id="accCarousel" data-acc-track>
-              <div class="acc-slide">
-                <a class="acc-img-link" href="https://www.booking.com/hotel/pt/crowne-plaza-caparica-lisboa.pt-pt.html" target="_blank" rel="noopener">
-                  <div class="acc-img-wrapper">
-                    <img src="imagens/crown-plaze.png" alt="Crowne Plaza Caparica Lisboa" loading="lazy" decoding="async" />
-                    <div class="acc-capacity-badge">
-                      <span class="acc-capacity-icon">
-                        <img class="acc-capacity-icon-img" src="imagens/user.png" alt="" aria-hidden="true" />
-                      </span>2-4
-                    </div>
-                    <div class="acc-title-overlay">Crowne Plaza Caparica Lisboa</div>
-                  </div>
-                </a>
-              </div>
-
-              <div class="acc-slide">
-                <a class="acc-img-link" href="https://www.booking.com/hotel/pt/hotelcostadacaparica.pt-pt.html" target="_blank" rel="noopener">
-                  <div class="acc-img-wrapper">
-                    <img src="imagens/tryp.png" alt="Tryp by Wyndham Lisboa Caparica Mar" loading="lazy" decoding="async" />
-                    <div class="acc-capacity-badge">
-                      <span class="acc-capacity-icon">
-                        <img class="acc-capacity-icon-img" src="imagens/user.png" alt="" aria-hidden="true" />
-                      </span>2-5
-                    </div>
-                    <div class="acc-title-overlay">Tryp by Wyndham Lisboa Caparica Mar</div>
-                  </div>
-                </a>
-              </div>
-
-              <div class="acc-slide">
-                <a class="acc-img-link" href="https://www.booking.com/hotel/pt/lisboa-almada-hotel.pt-pt.html" target="_blank" rel="noopener">
-                  <div class="acc-img-wrapper">
-                    <img src="imagens/mercure.png" alt="Mercure Lisboa Almada" loading="lazy" decoding="async" />
-                    <div class="acc-capacity-badge">
-                      <span class="acc-capacity-icon">
-                        <img class="acc-capacity-icon-img" src="imagens/user.png" alt="" aria-hidden="true" />
-                      </span>2-4
-                    </div>
-                    <div class="acc-title-overlay">Mercure Lisboa Almada</div>
-                  </div>
-                </a>
-              </div>
-
-              <div class="acc-slide">
-                <a class="acc-img-link" href="https://www.airbnb.pt/rooms/944327008368209825" target="_blank" rel="noopener">
-                  <div class="acc-img-wrapper">
-                    <img src="imagens/yo-house.png" alt="Yo-House" loading="lazy" decoding="async" />
-                    <div class="acc-capacity-badge">
-                      <span class="acc-capacity-icon">
-                        <img class="acc-capacity-icon-img" src="imagens/user.png" alt="" aria-hidden="true" />
-                      </span>2-10
-                    </div>
-                    <div class="acc-title-overlay">Yo-House</div>
-                  </div>
-                </a>
-              </div>
-
-              <div class="acc-slide">
-                <a class="acc-img-link" href="#" target="_blank" rel="noopener">
-                  <div class="acc-img-wrapper">
-                    <img src="imagens/default.png" alt="Hotel/Casa" loading="lazy" decoding="async" />
-                    <div class="acc-capacity-badge">
-                      <span class="acc-capacity-icon">
-                        <img class="acc-capacity-icon-img" src="imagens/user.png" alt="" aria-hidden="true" />
-                      </span>x-y
-                    </div>
-                    <div class="acc-title-overlay">Hotel/Casa</div>
-                  </div>
-                </a>
-              </div>
-
-              <div class="acc-slide">
-                <a class="acc-img-link" href="#" target="_blank" rel="noopener">
-                  <div class="acc-img-wrapper">
-                    <img src="imagens/default.png" alt="Hotel/Casa2" loading="lazy" decoding="async" />
-                    <div class="acc-capacity-badge">
-                      <span class="acc-capacity-icon">
-                        <img class="acc-capacity-icon-img" src="imagens/user.png" alt="" aria-hidden="true" />
-                      </span>x-y
-                    </div>
-                    <div class="acc-title-overlay">Hotel/Casa2</div>
-                  </div>
-                </a>
-              </div>
-
-            </div>
+              loading="lazy" title="Mapa Localização" allowfullscreen></iframe>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="break-icon-inline break-icon-inline--lg" aria-hidden="true">
-      <img class="break-icon-img" src="imagens/qebra.png" alt="" loading="eager" decoding="async" />
-    </div>
+    <!-- Venue Gallery -->
+    <section class="venue-section container" id="quinta">
+      <header class="venue-header">
+        <h2 class="section-title font-against">Quinta da Falésia</h2>
+        <p class="section-subtitle">O sítio que escolhemos para passar o nosso dia.</p>
+      </header>
 
-    <section class="ugc-section" id="memorias">
-      <div class="ugc-inner">
-
-        <template id="ugcCardTpl">
-          <article class="ugc-card">
-            <button class="ugc-card-btn" type="button">
-              <img class="ugc-card-img" alt="" loading="lazy" decoding="async" />
-              <span class="ugc-card-title"></span>
-            </button>
-          </article>
-        </template>
-
-        <header class="ugc-hero">
-          <h2 class="ugc-title font-against">Obrigado a todos</h2>
-          <p class="ugc-subtitle">Por fazerem parte da nossa vida. Deixa-nos uma recordação nossa</p>
-
-          <button class="ugc-btn" type="button" data-open-upload>
-            Enviar foto
-          </button>
-        </header>
-
-        <div class="ugc-topbar">
-          <div class="ugc-results" aria-live="polite">Resultados: <span id="ugcCount">0</span></div>
-          <div class="ugc-sort">
-            <button class="ugc-sort-btn" type="button" data-sort="latest" aria-label="Ordenar">
-              Mais recentes
-              <span class="ugc-sort-caret" aria-hidden="true">⌄</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="ugc-grid" id="ugcGrid" aria-label="Galeria de memórias"></div>
+      <div class="venue-grid gallery" aria-label="Galeria da Quinta">
+        <figure class="gallery-item item-lg"><img src="imagens/fin5.webp" alt="Quinta - Vista Geral" loading="lazy" />
+        </figure>
+        <figure class="gallery-item"><img src="imagens/fin2.webp" alt="Quinta - Exterior" loading="lazy" /></figure>
+        <figure class="gallery-item"><img src="imagens/fin3.webp" alt="Quinta - Cerimónia" loading="lazy" /></figure>
+        <figure class="gallery-item"><img src="imagens/fin4.webp" alt="Quinta - Interior" loading="lazy" /></figure>
+        <figure class="gallery-item"><img src="imagens/fin1.webp" alt="Quinta - Detalhes" loading="lazy" /></figure>
       </div>
+    </section>
 
-      <div class="ugc-modal" id="ugcModal" aria-hidden="true">
-        <div class="ugc-modal-inner" role="dialog" aria-modal="true" aria-label="Enviar foto">
-          <button class="ugc-modal-close" type="button" aria-label="Fechar">×</button>
+    <!-- Accommodation -->
+    <section class="acc-section container" id="alojamento">
+      <h2 class="section-title font-against">Acomodação</h2>
+      <p class="section-subtitle">Sugestões para quem precisa de sítio para ficar:</p>
 
-          <h3 class="ugc-modal-title font-against">Enviar foto</h3>
-
-          <div class="ugc-steps" aria-hidden="true">
-            <div class="ugc-step is-active" data-step-dot="1"><span>1</span><small>MEDIA</small></div>
-            <div class="ugc-step" data-step-dot="2"><span>2</span><small>INFO</small></div>
+      <div class="carousel-container">
+        <div class="carousel-nav">
+          <button class="nav-btn prev" aria-label="Anterior">&larr;</button>
+          <button class="nav-btn next" aria-label="Seguinte">&rarr;</button>
+        </div>
+        <div class="carousel-viewport" id="accCarousel">
+          <div class="carousel-item">
+            <a href="https://www.booking.com/hotel/pt/crowne-plaza-caparica-lisboa.pt-pt.html" target="_blank">
+              <img src="imagens/crown-plaze.webp" alt="Crowne Plaza" />
+              <div class="item-overlay">Crowne Plaza (2-4 pax)</div>
+            </a>
           </div>
-
-          <div class="ugc-step-panels" data-ugc-panels>
-            <section class="ugc-panel is-active" data-ugc-step="1" aria-label="Selecionar ficheiros">
-              <div class="ugc-drop" data-dropzone>
-                <input id="ugcFile" class="ugc-file" type="file" accept="image/*" multiple />
-                <div class="ugc-drop-ui">
-                  <div class="ugc-drop-icon" aria-hidden="true">🖼️</div>
-                  <p>Escolhe um ficheiro, ou arrasta para aqui</p>
-                </div>
-              </div>
-
-              <div class="ugc-preview" aria-label="Pré-visualização">
-                <div class="ugc-preview-grid" id="ugcPreviewList"></div>
-              </div>
-            </section>
-
-            <section class="ugc-panel" data-ugc-step="2" aria-label="Informação e envio">
-              <div class="ugc-form">
-                <label class="ugc-label" for="ugcTitle">Título</label>
-                <input id="ugcTitle" class="ugc-input" type="text" placeholder="Exemplo: Momentos na Quinta" autocomplete="off" />
-
-                <button type="button" class="ugc-submit" data-ugc-submit>
-                  Submeter
-                </button>
-              </div>
-            </section>
+          <div class="carousel-item">
+            <a href="https://www.booking.com/hotel/pt/hotelcostadacaparica.pt-pt.html" target="_blank">
+              <img src="imagens/tryp.webp" alt="Tryp" />
+              <div class="item-overlay">Tryp Wyndham (2-5 pax)</div>
+            </a>
           </div>
-
-          <div class="ugc-status" id="ugcStatus" aria-live="polite"></div>
-
-          <div class="ugc-actions">
-            <button type="button" class="ugc-nav" data-prev disabled aria-label="Anterior">‹</button>
-            <button type="button" class="ugc-nav" data-next aria-label="Seguinte">›</button>
+          <div class="carousel-item">
+            <a href="https://www.booking.com/hotel/pt/lisboa-almada-hotel.pt-pt.html" target="_blank">
+              <img src="imagens/mercure.webp" alt="Mercure" />
+              <div class="item-overlay">Mercure Almada (2-4 pax)</div>
+            </a>
+          </div>
+          <div class="carousel-item">
+            <a href="https://www.airbnb.pt/rooms/944327008368209825" target="_blank">
+              <img src="imagens/yo-house.webp" alt="Yo-House" />
+              <div class="item-overlay">Yo-House (2-10 pax)</div>
+            </a>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- Memories / UGC -->
+    <section class="ugc-section container" id="memorias">
+      <div class="ugc-header">
+        <h2 class="section-title font-against">Obrigado a todos</h2>
+        <p class="section-subtitle">Por fazerem parte da nossa vida. Deixa-nos uma recordação.</p>
+        <button class="btn btn-secondary" id="btnOpenUpload">Enviar foto</button>
+      </div>
+
+      <div class="ugc-toolbar">
+        <span class="results-text">Fotos partilhadas: <span id="photoCount">0</span></span>
+        <button class="sort-toggle" id="btnSort">Recentes primeiro</button>
+      </div>
+
+      <div class="ugc-grid" id="photoGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
   </main>
+
+  <!-- Modals -->
+  <div class="modal" id="mediaModal" aria-hidden="true">
+    <div class="modal-overlay" data-close></div>
+    <div class="modal-container">
+      <button class="modal-close" data-close aria-label="Fechar">&times;</button>
+      <div class="modal-body">
+        <img class="modal-img" src="" alt="Destaque" />
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="uploadModal" aria-hidden="true">
+    <div class="modal-overlay" data-close></div>
+    <div class="modal-container upload-form">
+      <button class="modal-close" data-close aria-label="Fechar">&times;</button>
+      <h3 class="font-against">Partilhar Memória</h3>
+
+      <form id="formUpload" class="fancy-form">
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" accept="image/*" multiple hidden />
+          <div class="drop-text">Arrasta fotos ou clica aqui</div>
+          <div class="file-previews" id="filePreviews"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="photoTitle">O que é este momento?</label>
+          <input type="text" id="photoTitle" placeholder="Ex: A nossa primeira viagem" />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full">Publicar</button>
+        <div id="uploadStatus" class="status-msg"></div>
+      </form>
+    </div>
+  </div>
 
   <script src="script.js" defer></script>
 </body>
+
 </html>
