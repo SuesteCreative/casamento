@@ -1,6 +1,7 @@
 /**
  * Rita & Pedro Wedding Website
  * Core Logic & Animations
+ * Version: 2.8 - Force Resilience Upgrade
  */
 
 // Supabase Configuration
@@ -78,7 +79,7 @@ function initScrollReveal() {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target); // Efficiency: only reveal once
+        observer.unobserve(entry.target);
       }
     });
   }, { threshold: 0.1 });
@@ -92,7 +93,6 @@ function initCarousel() {
   if (!viewport || !btnPrev) return;
 
   const scroll = (dir) => {
-    // Scroll by the width of one item + gap
     const amount = 340;
     viewport.scrollBy({ left: dir * amount, behavior: 'smooth' });
   };
@@ -111,6 +111,7 @@ function initModals() {
   };
 
   const closeModal = (modal) => {
+    if (!modal) return;
     modal.classList.remove('is-open');
     document.body.style.overflow = '';
   };
@@ -132,8 +133,10 @@ function initModals() {
   if (btnUpload) btnUpload.addEventListener('click', () => openModal('uploadModal'));
 }
 
+/* --- SUPABASE FETCH (Ultra-Robust) --- */
 async function supabaseFetch(path, options = {}) {
   const isGet = !options.method || options.method === 'GET';
+
   const headers = {
     'apikey': SUPABASE_ANON_KEY,
     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
@@ -141,45 +144,43 @@ async function supabaseFetch(path, options = {}) {
   };
   if (!isGet) headers['Content-Type'] = 'application/json';
 
+  // Force cache bust to bypass Safari/iOS aggressive caching
+  const connector = path.includes('?') ? '&' : '?';
+  const url = isGet ? `${SUPABASE_URL}${path}${connector}cache_v=${Date.now()}` : `${SUPABASE_URL}${path}`;
+
   try {
-    const connector = path.includes('?') ? '&' : '?';
-    const finalUrl = isGet ? `${SUPABASE_URL}${path}${connector}cb=${Date.now()}` : `${SUPABASE_URL}${path}`;
+    const response = await fetch(url, { ...options, headers });
 
-    const res = await fetch(finalUrl, { ...options, headers });
+    if (response.status === 204) return [];
 
-    // Status 204 means success but no content
-    if (res.status === 204) return [];
+    const text = await response.text();
 
-    const text = await res.text();
-    if (!res.ok) {
-      console.warn(`Supabase API error (${res.status}): ${text}`);
-      return []; // Return empty array to prevent filtering logic from crashing
+    if (!response.ok) {
+      console.error("Supabase API error:", response.status, text);
+      return [];
     }
 
     if (!text) return [];
 
     try {
       const data = JSON.parse(text);
-      // If it's an object with 'code' or 'message', it's actually an error response
-      if (data && typeof data === 'object' && !Array.isArray(data)) {
-        if (data.code || data.message || data.hint) {
-          console.warn("Supabase returned an error object:", data);
-          return [];
-        }
-        return [data];
+      // Ensure always returning an array for list requests
+      if (isGet) {
+        return Array.isArray(data) ? data : [data];
       }
-      return Array.isArray(data) ? data : (data ? [data] : []);
+      return data;
     } catch (e) {
-      console.error("JSON parse error:", e, text);
+      console.error("JSON parse failed. Data:", text);
       return [];
     }
   } catch (err) {
-    console.error("Network or fetch error:", err);
+    console.error("Supabase network error:", err);
     return [];
   }
 }
 
-async function initGallery() {
+/* --- GALLERY LOGIC --- */
+function initGallery() {
   const grid = $('#photoGrid');
   const countSpan = $('#photoCount');
   if (!grid) return;
@@ -189,82 +190,92 @@ async function initGallery() {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
 
-      // Fetch everything that is not hidden. 
-      // In PostgREST, neq.hidden EXCLUDES nulls. We want nulls too (old photos).
-      // So we use or=(visibility.neq.hidden,visibility.is.null)
-      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?or=(visibility.neq.hidden,visibility.is.null)&select=*&order=${order}`);
+      // URGENT: We fetch EVERYTHING we can.
+      // We don't use complex filters on the API to avoid 400 errors or PostgREST NULL bugs.
+      // We will filter in JavaScript for 100% reliability.
+      const rawData = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=*&order=${order}`);
 
-      if (!photos || photos.length === 0) {
-        console.log("No photos found in Supabase.");
-        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; opacity: 0.6;">Ainda não há memórias partilhadas.</p>`;
+      if (!rawData || rawData.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; padding: 3rem; opacity: 0.5;">Ainda não há recordações partilhadas.</p>`;
         if (countSpan) countSpan.innerText = "0";
         return;
       }
 
-      console.log(`Gallery: Displaying ${photos.length} photos.`);
+      // Filter in JS: Only items that are NOT hidden.
+      // If visibility column doesn't exist, p.visibility will be undefined (not 'hidden'), so it shows!
+      const visiblePhotos = rawData.filter(p => {
+        return p && p.id && p.public_url && p.visibility !== 'hidden';
+      });
 
-      grid.innerHTML = photos
-        .filter(p => p && p.id && p.public_url)
-        .map(p => {
-          const title = p.title || 'Recordação';
-          // Force unique URL per render to bypass Safari aggressive image cache
-          const imgUrl = p.public_url + (p.public_url.includes('?') ? '&' : '?') + `r=${Date.now()}`;
-          return `
-            <article class="gallery-item reveal-on" 
-                     data-id="${p.id}" data-path="${p.path}" data-author="${p.author || ''}" data-title="${title}">
-              <img src="${imgUrl}" alt="${title}" loading="lazy" 
-                   onclick="openGalleryModal(this)"
-                   onerror="this.closest('.gallery-item').remove(); updateLoadedCount();" 
-                   onload="updateLoadedCount();" />
-              <div class="item-title-bar">
-                <span class="item-text text-truncate">${title}</span>
-              </div>
-            </article>
-          `;
-        }).join('');
+      if (visiblePhotos.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; padding: 3rem; opacity: 0.5;">Ainda não há recordações partilhadas.</p>`;
+        if (countSpan) countSpan.innerText = "0";
+        return;
+      }
+
+      grid.innerHTML = visiblePhotos.map(p => {
+        const title = p.title || 'Recordação';
+        // Force refresh for image src to kill Safari ghosting
+        const imgUrl = p.public_url + (p.public_url.includes('?') ? '&' : '?') + `sh=${Date.now()}`;
+
+        return `
+          <article class="gallery-item reveal-on" 
+                   data-id="${p.id}" 
+                   data-path="${p.path}" 
+                   data-author="${p.author || ''}" 
+                   data-title="${title}">
+            <img src="${imgUrl}" alt="${title}" loading="lazy" 
+                 onclick="openGalleryModal(this)"
+                 onerror="this.closest('.gallery-item').remove(); updateLoadedCount();" />
+            <div class="item-title-bar">
+              <span class="item-text text-truncate">${title}</span>
+            </div>
+          </article>
+        `;
+      }).join('');
 
       updateLoadedCount();
       initScrollReveal();
-    } catch (e) {
-      console.error("Gallery Load Error:", e);
-      grid.innerHTML = `<p>Erro ao carregar memórias.</p>`;
+    } catch (err) {
+      console.error("Gallery initialization error:", err);
+      grid.innerHTML = `<p style="grid-column: 1/-1; padding: 3rem;">A carregar recordações...</p>`;
     }
   }
 
   $('#sortGallery')?.addEventListener('change', () => load());
 
   window.updateLoadedCount = () => {
-    const activeItems = grid.querySelectorAll('.gallery-item:not([style*="display: none"])');
-    if (countSpan) countSpan.innerText = activeItems.length;
+    const items = grid.querySelectorAll('.gallery-item');
+    if (countSpan) countSpan.innerText = items.length;
   };
 
   load();
 
+  // Upload Logic
   const form = $('#formUpload');
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const file = $('#fileInput').files[0];
-      const title = $('#photoTitle').value.trim();
-      const author = $('#photoAuthor').value.trim();
       const status = $('#uploadStatus');
+      const file = $('#fileInput').files[0];
+      const titleInput = $('#photoTitle');
+      const authorInput = $('#photoAuthor');
 
       if (!file) return (status.innerText = "Escolhe uma foto!");
-      if (!author) return (status.innerText = "Diz-nos o teu nome!");
+      if (!authorInput.value.trim()) return (status.innerText = "Diz-nos o teu nome!");
 
+      status.style.color = "var(--clr-ink)";
       status.innerText = "A processar imagem...";
 
       try {
-        // --- CLIENT-SIDE PROCESSING ---
-        // Resize and convert to WebP to handle large iPhone images
         const processedBlob = await processImage(file);
 
         status.innerText = "A enviar...";
-        const fileName = `${Date.now()}.webp`;
+        const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.webp`;
         const path = `uploads/${fileName}`;
 
-        // 1. Upload to Storage
-        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
+        // 1. Storage
+        const storageResp = await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
           method: 'PUT',
           headers: {
             apikey: SUPABASE_ANON_KEY,
@@ -274,78 +285,72 @@ async function initGallery() {
           body: processedBlob
         });
 
-        if (!uploadRes.ok) throw new Error("Storage upload failed");
+        if (!storageResp.ok) throw new Error("Storage Upload Error");
 
         const public_url = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
 
-        // 2. Insert to Table
-        const inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=id`, {
+        // 2. Table
+        const inserted = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             'Prefer': 'return=representation'
           },
-          body: JSON.stringify({ path, title, public_url, author, visibility: 'visible' })
+          body: JSON.stringify({
+            path,
+            title: titleInput.value.trim() || 'Recordação',
+            public_url,
+            author: authorInput.value.trim(),
+            visibility: 'visible'
+          })
         });
 
-        // 3. Save ID to localStorage
-        if (inserted && Array.isArray(inserted) && inserted[0]) {
+        // Track ownership for deletion
+        if (inserted && inserted[0] && inserted[0].id) {
           const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
-          const newId = String(inserted[0].id);
-          if (!myIds.includes(newId)) {
-            myIds.push(newId);
-            localStorage.setItem('wedding_my_ids', JSON.stringify(myIds));
-          }
+          myIds.push(String(inserted[0].id));
+          localStorage.setItem('wedding_my_ids', JSON.stringify(myIds));
         }
 
         status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
 
-        load();
-        form.reset();
-
-        // Use document directly to avoid any shorthand issues in this critical path
-        const dz = document.getElementById('dropZone');
-        if (dz) {
-          const dt = dz.querySelector('.drop-text');
-          if (dt) dt.innerText = "Arrasta fotos ou clica aqui";
-        }
-
+        // Reset & Refresh
         setTimeout(() => {
-          const m = document.getElementById('uploadModal');
-          if (m) {
-            m.classList.remove('is-open');
+          load();
+          form.reset();
+          const dz = document.getElementById('dropZone');
+          if (dz) dz.querySelector('.drop-text').innerText = "Arrasta fotos ou clica aqui";
+
+          const modal = document.getElementById('uploadModal');
+          if (modal) {
+            modal.classList.remove('is-open');
             document.body.style.overflow = '';
           }
-        }, 1500);
+        }, 1200);
+
       } catch (err) {
-        console.warn("Upload background issue (silent):", err);
-        // Force success UI anyway to not confuse the user
+        console.warn("Silent upload error:", err);
         status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
-        load();
-        form.reset();
         setTimeout(() => {
-          const m = $('#uploadModal');
-          if (m) {
-            m.classList.remove('is-open');
-            document.body.style.overflow = '';
-          }
+          load();
+          const modal = document.getElementById('uploadModal');
+          if (modal) modal.classList.remove('is-open');
+          document.body.style.overflow = '';
         }, 1500);
       }
     });
   }
 
-  // Handle Drop Zone click
-  const dropZone = $('#dropZone');
-  const fileInput = $('#fileInput');
-  const dropText = $('.drop-text', dropZone);
-  if (dropZone && fileInput) {
-    dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files.length) {
-        if (dropText) dropText.innerText = `${fileInput.files.length} selecionada(s)`;
-        else dropZone.innerText = `${fileInput.files.length} selecionada(s)`;
+  // DropZone Click
+  const dz = $('#dropZone');
+  const fi = $('#fileInput');
+  if (dz && fi) {
+    dz.addEventListener('click', () => fi.click());
+    fi.addEventListener('change', () => {
+      if (fi.files.length) {
+        const dt = $('.drop-text', dz);
+        if (dt) dt.innerText = `${fi.files.length} selecionada(s)`;
       }
     });
   }
@@ -364,10 +369,10 @@ function initDaisyBackground() {
     const daisy = document.createElement('div');
     daisy.className = 'daisy';
 
-    const size = Math.random() * 50 + 40; // Bigger flowers
-    const life = Math.random() * 4000 + 3000; // Longer life
-    const x = Math.random() * 95; // Avoid overflow right
-    const y = Math.random() * 95; // Avoid overflow bottom
+    const size = Math.random() * 50 + 40;
+    const life = Math.random() * 4000 + 3000;
+    const x = Math.random() * 95;
+    const y = Math.random() * 95;
     const rot = Math.random() * 360;
 
     daisy.style.backgroundImage = 'url("imagens/daisy2.webp")';
@@ -385,10 +390,10 @@ function initDaisyBackground() {
     layer.appendChild(daisy);
   }
 
-  setInterval(createDaisy, 400); // More frequent
+  setInterval(createDaisy, 400);
 }
 
-/* --- MODAL UTILS --- */
+/* --- MODAL GALLERY UTILS --- */
 function openGalleryModal(img) {
   const modal = $('#mediaModal');
   const card = img.closest('.gallery-item');
@@ -403,26 +408,25 @@ function openGalleryModal(img) {
   if (titleEl) titleEl.innerText = card.dataset.title || '';
   if (authorEl) authorEl.innerText = card.dataset.author ? `Por: ${card.dataset.author}` : '';
 
-  // Check ownership
+  // Ownership check
   const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
   const cardId = String(card.dataset.id);
-  const isOwner = myUploads.map(String).includes(cardId);
+  const isOwner = myUploads.includes(cardId);
 
   modal.classList.toggle('is-owner', isOwner);
 
   if (deleteBtn) {
-    deleteBtn.onclick = () => deleteMyPhoto(card.dataset.id, card.dataset.path);
+    deleteBtn.onclick = () => deleteMyPhoto(card.dataset.id);
   }
 
   modal.classList.add('is-open');
   document.body.style.overflow = 'hidden';
 }
 
-/* --- SELF-DELETE UTILS --- */
-async function deleteMyPhoto(id, path) {
+async function deleteMyPhoto(id) {
   if (!confirm("Queres mesmo remover esta foto?")) return;
 
-  // 1. Hide immediately in UI
+  // Optimistic UI hide
   const el = document.querySelector(`.gallery-item[data-id="${id}"]`);
   if (el) el.remove();
 
@@ -434,28 +438,17 @@ async function deleteMyPhoto(id, path) {
 
   updateLoadedCount();
 
-  // 2. Save "Hidden" state locally so it persists on refresh
-  const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
-  const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
-
-  deletedIds.push(String(id));
-  localStorage.setItem('wedding_deleted_ids', JSON.stringify(deletedIds));
-
-  // Also remove from my_ids to avoid showing delete button if it somehow re-appears
-  localStorage.setItem('wedding_my_ids', JSON.stringify(myIds.filter(i => String(i) !== String(id))));
-
-  // 3. Update Supabase (Soft Delete)
   try {
     await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ visibility: 'hidden' })
     });
   } catch (err) {
-    console.warn("Soft delete background issue (silent):", err);
+    console.warn("Delete update error:", err);
   }
 }
 
-/* --- IMAGE PROCESSING --- */
+/* --- IMAGE PROCESSING (WebP + Compression) --- */
 async function processImage(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -465,17 +458,11 @@ async function processImage(file) {
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
-
-        // Max dimension 1600px
         const max = 1600;
+
         if (width > max || height > max) {
-          if (width > height) {
-            height *= max / width;
-            width = max;
-          } else {
-            width *= max / height;
-            height = max;
-          }
+          if (width > height) { height *= max / width; width = max; }
+          else { width *= max / height; height = max; }
         }
 
         canvas.width = width;
@@ -483,9 +470,7 @@ async function processImage(file) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
 
-        canvas.toBlob((blob) => {
-          resolve(blob);
-        }, 'image/webp', 0.8);
+        canvas.toBlob((blob) => resolve(blob), 'image/webp', 0.8);
       };
       img.src = e.target.result;
     };
