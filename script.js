@@ -122,12 +122,6 @@ function initModals() {
     }
   });
 
-  document.body.addEventListener('click', (e) => {
-    if (e.target.closest('.gallery-item img')) {
-      openModal('mediaModal', e.target.closest('img').src);
-    }
-  });
-
   const btnUpload = $('#btnOpenUpload');
   if (btnUpload) btnUpload.addEventListener('click', () => openModal('uploadModal'));
 }
@@ -147,7 +141,12 @@ async function supabaseFetch(path, options = {}) {
     throw new Error(`Supabase error: ${res.statusText}`);
   }
   const text = await res.text();
-  return text ? JSON.parse(text) : {};
+  if (!text) return options.method === 'PATCH' ? { success: true } : {};
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    return { text };
+  }
 }
 
 async function initGallery() {
@@ -248,30 +247,34 @@ async function initGallery() {
         // 3. Save ID to localStorage
         if (inserted && inserted[0]) {
           const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
-          myIds.push(String(inserted[0].id)); // Save as string
-          localStorage.setItem('wedding_my_ids', JSON.stringify(myIds));
+          const newId = String(inserted[0].id);
+          if (!myIds.includes(newId)) {
+            myIds.push(newId);
+            localStorage.setItem('wedding_my_ids', JSON.stringify(myIds));
+          }
         }
 
         status.style.color = "green";
         status.innerText = "Enviado com sucesso! 🎉";
         form.reset();
+
         const dropT = $('.drop-text', '#dropZone');
         if (dropT) dropT.innerText = "Arrasta fotos ou clica aqui";
 
-        // Refresh and close
         load();
+
+        // Final success delay before closing
         setTimeout(() => {
-          const m = $('.modal.is-open');
+          const m = $('.modal.is-open#uploadModal');
           if (m) {
             m.classList.remove('is-open');
             document.body.style.overflow = '';
           }
-        }, 1200);
+        }, 1500);
       } catch (err) {
-        console.error("Upload Error Details:", err);
+        console.error("Upload Logic Error:", err);
         status.style.color = "red";
-        status.innerText = "Erro ao enviar. Tenta outra foto.";
-        // alert("Erro no upload: " + err.message); // Temporary debug for iPhone
+        status.innerText = "Erro ao enviar. Tenta de novo.";
       }
     });
   }
