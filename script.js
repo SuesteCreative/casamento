@@ -143,7 +143,9 @@ async function supabaseFetch(path, options = {}) {
   if (!isGet) headers['Content-Type'] = 'application/json';
 
   try {
-    const res = await fetch(`${SUPABASE_URL}${path}`, { ...options, headers });
+    const connector = path.includes('?') ? '&' : '?';
+    const finalUrl = isGet ? `${SUPABASE_URL}${path}${connector}cb=${Date.now()}` : `${SUPABASE_URL}${path}`;
+    const res = await fetch(finalUrl, { ...options, headers });
     if (res.status === 204) return [];
 
     if (!res.ok) {
@@ -176,26 +178,28 @@ async function initGallery() {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
 
-      // 1. Fetch only visible photos (Cache busted)
-      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}&v=${Date.now()}`);
+      // 1. Fetch only visible photos (supabaseFetch handles global cache busting)
+      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}`);
 
       if (!photos || photos.length === 0) {
-        console.log("No photos found in Supabase or fetch failed.");
+        console.log("No photos found in Supabase.");
         grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; opacity: 0.6;">Ainda não há memórias partilhadas.</p>`;
         if (countSpan) countSpan.innerText = "0";
         return;
       }
 
-      console.log(`Gallery: Loaded ${photos.length} photos from server.`);
+      console.log(`Gallery: Loaded ${photos.length} photos.`);
 
       grid.innerHTML = photos
         .filter(p => p && p.id && p.public_url)
         .map(p => {
           const title = p.title || 'Recordação';
+          // Safari fix: force fresh image load with a unique per-render parameter
+          const imgUrl = `${p.public_url}?render=${Date.now()}`;
           return `
             <article class="gallery-item reveal-on" 
                      data-id="${p.id}" data-path="${p.path}" data-author="${p.author || ''}" data-title="${title}">
-              <img src="${p.public_url}" alt="${title}" loading="lazy" 
+              <img src="${imgUrl}" alt="${title}" loading="lazy" 
                    onclick="openGalleryModal(this)"
                    onerror="this.closest('.gallery-item').remove(); updateLoadedCount();" 
                    onload="updateLoadedCount();" />
@@ -353,14 +357,15 @@ function initDaisyBackground() {
     const y = Math.random() * 95; // Avoid overflow bottom
     const rot = Math.random() * 360;
 
+    daisy.style.backgroundImage = 'url("imagens/daisy2.webp")';
     daisy.style.left = `${x}%`;
     daisy.style.top = `${y}%`;
     daisy.style.setProperty('--size', `${size}px`);
 
     daisy.animate([
       { opacity: 0, transform: `scale(0.3) rotate(${rot}deg)` },
-      { opacity: 0.6, transform: `scale(1) rotate(${rot + 60}deg)`, offset: 0.3 },
-      { opacity: 0.6, transform: `scale(1) rotate(${rot + 120}deg)`, offset: 0.7 },
+      { opacity: 0.7, transform: `scale(1) rotate(${rot + 60}deg)`, offset: 0.3 },
+      { opacity: 0.7, transform: `scale(1) rotate(${rot + 120}deg)`, offset: 0.7 },
       { opacity: 0, transform: `scale(0.3) rotate(${rot + 200}deg)` }
     ], { duration: life, easing: 'ease-in-out' }).onfinish = () => daisy.remove();
 
