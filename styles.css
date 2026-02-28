@@ -230,12 +230,11 @@ section {
 
 /* Countdown */
 .countdown-card {
-  padding: var(--gap-md);
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius);
-  box-shadow: var(--glass-shadow);
+  padding: 0;
+  background: none;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
 }
 
 .countdown-display {
@@ -441,7 +440,7 @@ section {
 }
 
 .carousel-item {
-  min-width: 300px;
+  min-width: 260px;
   flex-shrink: 0;
   aspect-ratio: 4/3;
   position: relative;
@@ -472,9 +471,8 @@ section {
 
 @media (max-width: 500px) {
   .carousel-item {
-    min-width: 260px;
-    /* Better fit for small phones */
-    flex: 0 0 calc(100% - 20px);
+    min-width: 220px;
+    flex: 0 0 calc(100% - 40px);
   }
 }
 
