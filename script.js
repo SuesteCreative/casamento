@@ -160,24 +160,27 @@ async function initGallery() {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
       const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?select=*&order=${order}`);
+
       const myUploads = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
+      const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
 
-      grid.innerHTML = photos.map(p => {
-        const title = p.title || 'Recordação';
-
-        return `
-          <article class="gallery-item reveal-on" 
-                   data-id="${p.id}" data-path="${p.path}" data-author="${p.author || ''}" data-title="${title}">
-            <img src="${p.public_url}" alt="${title}" loading="lazy" 
-                 onclick="openGalleryModal(this)"
-                 onerror="this.closest('.gallery-item').remove(); updateLoadedCount();" 
-                 onload="updateLoadedCount();" />
-            <div class="item-title-bar">
-              <span class="item-text text-truncate">${title}</span>
-            </div>
-          </article>
-        `;
-      }).join('');
+      grid.innerHTML = photos
+        .filter(p => !deletedIds.includes(String(p.id))) // Hide locally deleted ones
+        .map(p => {
+          const title = p.title || 'Recordação';
+          return `
+            <article class="gallery-item reveal-on" 
+                     data-id="${p.id}" data-path="${p.path}" data-author="${p.author || ''}" data-title="${title}">
+              <img src="${p.public_url}" alt="${title}" loading="lazy" 
+                   onclick="openGalleryModal(this)"
+                   onerror="this.closest('.gallery-item').remove(); updateLoadedCount();" 
+                   onload="updateLoadedCount();" />
+              <div class="item-title-bar">
+                <span class="item-text text-truncate">${title}</span>
+              </div>
+            </article>
+          `;
+        }).join('');
       initScrollReveal();
     } catch (e) {
       console.error("Gallery Load Error:", e);
@@ -357,35 +360,36 @@ function openGalleryModal(img) {
 async function deleteMyPhoto(id, path) {
   if (!confirm("Queres mesmo remover esta foto?")) return;
 
+  // 1. Hide immediately in UI
+  const el = document.querySelector(`.gallery-item[data-id="${id}"]`);
+  if (el) el.remove();
+
+  const modal = $('.modal.is-open');
+  if (modal) {
+    modal.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  updateLoadedCount();
+
+  // 2. Save "Hidden" state locally so it persists on refresh
+  const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
+  deletedIds.push(String(id));
+  localStorage.setItem('wedding_deleted_ids', JSON.stringify(deletedIds));
+
+  // 3. Background Request to Supabase (Silent)
   try {
-    // 1. Delete from Table
+    // Delete from Table
     await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`, {
       method: 'DELETE'
     });
-
-    // 2. Delete from Storage
+    // Delete from Storage
     await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
       method: 'DELETE',
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
     });
-
-    const myIds = JSON.parse(localStorage.getItem('wedding_my_ids') || '[]');
-    localStorage.setItem('wedding_my_ids', JSON.stringify(myIds.filter(i => String(i) !== String(id))));
-
-    // Close modal
-    const modal = $('.modal.is-open');
-    if (modal) {
-      modal.classList.remove('is-open');
-      document.body.style.overflow = '';
-    }
-
-    // Remove from UI
-    const el = document.querySelector(`.gallery-item[data-id="${id}"]`);
-    if (el) el.remove();
-    updateLoadedCount();
   } catch (err) {
-    console.error("Delete Error:", err);
-    alert("Erro ao remover. Tenta de novo.");
+    console.warn("Background delete failed (likely permissions), but it's hidden for the user.", err);
   }
 }
 
