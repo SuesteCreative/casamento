@@ -170,6 +170,9 @@ main {
   cursor: pointer;
   border-radius: var(--radius);
   overflow: hidden;
+  max-width: 460px;
+  /* Slightly smaller to make it shorter */
+  margin: 0 auto;
 }
 
 .img-swap img {
