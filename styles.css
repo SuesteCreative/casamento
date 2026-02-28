@@ -854,5 +854,5 @@ section {
   background-repeat: no-repeat;
   will-change: transform, opacity;
   opacity: 0;
-  z-index: 1;
+  z-index: 9999;
 }

@@ -20,8 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* --- UTILS --- */
-const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const $ = (s, r = document) => {
+  if (typeof r === 'string') r = document.querySelector(r);
+  return r ? r.querySelector(s) : null;
+};
+const $$ = (s, r = document) => {
+  if (typeof r === 'string') r = document.querySelector(r);
+  return r ? Array.from(r.querySelectorAll(s)) : [];
+};
 
 /* --- COUNTDOWN LOGIC --- */
 function initCountdown() {
@@ -170,10 +176,7 @@ async function initGallery() {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
 
-      // Use clean cache buster
-      const cacheBust = `v=${Date.now()}`;
-      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}&${cacheBust}`);
-
+      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}&v=${Date.now()}`);
       const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
 
       if (!photos || photos.length === 0) {
@@ -280,11 +283,16 @@ async function initGallery() {
 
         load();
         form.reset();
-        const dropT = $('.drop-text', '#dropZone');
-        if (dropT) dropT.innerText = "Arrasta fotos ou clica aqui";
+
+        // Use document directly to avoid any shorthand issues in this critical path
+        const dz = document.getElementById('dropZone');
+        if (dz) {
+          const dt = dz.querySelector('.drop-text');
+          if (dt) dt.innerText = "Arrasta fotos ou clica aqui";
+        }
 
         setTimeout(() => {
-          const m = $('#uploadModal');
+          const m = document.getElementById('uploadModal');
           if (m) {
             m.classList.remove('is-open');
             document.body.style.overflow = '';
@@ -336,10 +344,10 @@ function initDaisyBackground() {
     const daisy = document.createElement('div');
     daisy.className = 'daisy';
 
-    const size = Math.random() * 40 + 30;
-    const life = Math.random() * 3000 + 2500;
-    const x = Math.random() * 100;
-    const y = Math.random() * 100;
+    const size = Math.random() * 50 + 40; // Bigger flowers
+    const life = Math.random() * 4000 + 3000; // Longer life
+    const x = Math.random() * 95; // Avoid overflow right
+    const y = Math.random() * 95; // Avoid overflow bottom
     const rot = Math.random() * 360;
 
     daisy.style.left = `${x}%`;
@@ -348,15 +356,15 @@ function initDaisyBackground() {
 
     daisy.animate([
       { opacity: 0, transform: `scale(0.3) rotate(${rot}deg)` },
-      { opacity: 0.12, transform: `scale(1) rotate(${rot + 60}deg)`, offset: 0.3 },
-      { opacity: 0.12, transform: `scale(1) rotate(${rot + 120}deg)`, offset: 0.7 },
-      { opacity: 0, transform: `scale(0.3) rotate(${rot + 180}deg)` }
+      { opacity: 0.6, transform: `scale(1) rotate(${rot + 60}deg)`, offset: 0.3 },
+      { opacity: 0.6, transform: `scale(1) rotate(${rot + 120}deg)`, offset: 0.7 },
+      { opacity: 0, transform: `scale(0.3) rotate(${rot + 200}deg)` }
     ], { duration: life, easing: 'ease-in-out' }).onfinish = () => daisy.remove();
 
     layer.appendChild(daisy);
   }
 
-  setInterval(createDaisy, 900);
+  setInterval(createDaisy, 400); // More frequent
 }
 
 /* --- MODAL UTILS --- */
