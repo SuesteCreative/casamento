@@ -5,7 +5,7 @@
 
 // Supabase Configuration
 const SUPABASE_URL = "https://ofllnwwpyhhvyzuhwzzc.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_8iHaCkyT6RdrOF4Dcrf5VQ_ZLgr8zm6";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mbGxud3dweWhodnl6dWh3enpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5NzQzNzUsImV4cCI6MjA4NTU1MDM3NX0.W04EDji-e6ukxHXNiRwW1xy7K-bv-qyO_Yco99_fTOc";
 const SUPABASE_BUCKET = "wedding-uploads";
 const SUPABASE_TABLE = "wedding_photos";
 
