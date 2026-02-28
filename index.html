@@ -12,7 +12,7 @@
   <link rel="preload" as="image" href="imagens/logo-head.webp" />
   <link rel="preload" as="font" href="fonts/against-Regular.woff2" type="font/woff2" crossorigin />
 
-  <link rel="stylesheet" href="styles.css?v=2.0" />
+  <link rel="stylesheet" href="styles.css?v=2.3" />
   <link rel="icon" type="image/webp" href="imagens/fav-icon.webp">
 </head>
 
@@ -236,9 +236,15 @@
           <div class="file-previews" id="filePreviews"></div>
         </div>
 
-        <div class="form-group">
-          <label for="photoTitle">O que é este momento?</label>
-          <input type="text" id="photoTitle" placeholder="Ex: A nossa primeira viagem" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="photoAuthor">O teu nome</label>
+            <input type="text" id="photoAuthor" placeholder="Ex: Maria" required />
+          </div>
+          <div class="form-group">
+            <label for="photoTitle">O que é este momento?</label>
+            <input type="text" id="photoTitle" placeholder="Ex: Na praia" />
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary w-full">Publicar</button>
@@ -247,7 +253,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=2.2" defer></script>
+  <script src="script.js?v=2.3" defer></script>
 </body>
 
 </html>

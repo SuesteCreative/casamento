@@ -162,23 +162,32 @@ async function initGallery() {
 
       grid.innerHTML = photos.map(p => {
         const canDelete = myUploads.includes(p.id);
+        const title = p.title || 'Recordação';
+        const author = p.author ? `@${p.author}` : '';
+
         return `
           <article class="gallery-item reveal-on ${canDelete ? 'can-delete' : ''}" data-id="${p.id}" data-path="${p.path}">
-            <img src="${p.public_url}" alt="${p.title || ''}" loading="lazy" 
-                 onerror="this.closest('.gallery-item').remove()" />
+            <button class="btn-delete-item" onclick="deleteMyPhoto(event, ${p.id}, '${p.path}')" title="Remover minha foto">&times;</button>
+            <img src="${p.public_url}" alt="${title}" loading="lazy" 
+                 onerror="this.closest('.gallery-item').remove(); updateLoadedCount();" 
+                 onload="updateLoadedCount();" />
             <div class="item-title-bar">
-              <span>${p.title || 'Recordação'}</span>
-              <button class="btn-delete-item" onclick="deleteMyPhoto(event, ${p.id}, '${p.path}')" title="Remover minha foto">&times;</button>
+              <span class="item-text">${title}</span>
+              <span class="item-author">${author}</span>
             </div>
           </article>
         `;
       }).join('');
-      if (countSpan) countSpan.innerText = photos.length;
       initScrollReveal();
     } catch (e) {
       grid.innerHTML = `<p>A carregar memórias...</p>`;
     }
   }
+
+  window.updateLoadedCount = () => {
+    const activeItems = grid.querySelectorAll('.gallery-item:not([style*="display: none"])');
+    if (countSpan) countSpan.innerText = activeItems.length;
+  };
 
   load();
 
@@ -187,10 +196,12 @@ async function initGallery() {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const file = $('#fileInput').files[0];
-      const title = $('#photoTitle').value;
+      const title = $('#photoTitle').value.trim();
+      const author = $('#photoAuthor').value.trim();
       const status = $('#uploadStatus');
 
       if (!file) return (status.innerText = "Escolhe uma foto!");
+      if (!author) return (status.innerText = "Diz-nos o teu nome!");
 
       status.innerText = "A enviar...";
       try {
@@ -222,7 +233,7 @@ async function initGallery() {
             'Content-Type': 'application/json',
             'Prefer': 'return=representation'
           },
-          body: JSON.stringify({ path, title, public_url })
+          body: JSON.stringify({ path, title, public_url, author })
         });
 
         // 3. Save ID to localStorage so user can delete it later
