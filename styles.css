@@ -170,8 +170,8 @@ main {
   cursor: pointer;
   border-radius: var(--radius);
   overflow: hidden;
-  max-width: 460px;
-  /* Slightly smaller to make it shorter */
+  max-width: 420px;
+  /* Even smaller to make it shorter */
   margin: 0 auto;
 }
 
