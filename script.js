@@ -128,36 +128,35 @@ function initModals() {
 
 /* --- SUPABASE & GALLERY --- */
 async function supabaseFetch(path, options = {}) {
+  const isGet = !options.method || options.method === 'GET';
   const headers = {
     'apikey': SUPABASE_ANON_KEY,
     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    'Content-Type': 'application/json',
     ...options.headers
   };
-  const url = `${SUPABASE_URL}${path}`;
+  if (!isGet) headers['Content-Type'] = 'application/json';
 
   try {
-    const res = await fetch(url, { ...options, headers });
-
-    // 204 No Content is common for PATCH
-    if (res.status === 204) return { success: true };
+    const res = await fetch(`${SUPABASE_URL}${path}`, { ...options, headers });
+    if (res.status === 204) return [];
 
     if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`[${res.status}] ${errText || res.statusText}`);
+      console.warn(`Supabase Fetch Error [${res.status}]`);
+      return [];
     }
 
     const text = await res.text();
-    if (!text) return { success: true };
+    if (!text) return [];
 
     try {
-      return JSON.parse(text);
+      const data = JSON.parse(text);
+      return Array.isArray(data) ? data : [data];
     } catch (e) {
-      return { success: true, text };
+      return [];
     }
   } catch (err) {
-    console.error(`Supabase Fetch Error (${path}):`, err);
-    throw err;
+    console.error("Fetch Error:", err);
+    return [];
   }
 }
 
@@ -170,14 +169,21 @@ async function initGallery() {
     try {
       const sortBy = $('#sortGallery')?.value || 'recent';
       const order = sortBy === 'recent' ? 'created_at.desc' : 'created_at.asc';
-      // Add cache buster for iPhone
-      const cacheBust = `&t=${Date.now()}`;
-      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}${cacheBust}`);
+
+      // Use clean cache buster
+      const cacheBust = `v=${Date.now()}`;
+      const photos = await supabaseFetch(`/rest/v1/${SUPABASE_TABLE}?visibility=eq.visible&select=*&order=${order}&${cacheBust}`);
 
       const deletedIds = JSON.parse(localStorage.getItem('wedding_deleted_ids') || '[]');
 
+      if (!photos || photos.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; opacity: 0.6;">Ainda não há memórias partilhadas.</p>`;
+        if (countSpan) countSpan.innerText = "0";
+        return;
+      }
+
       grid.innerHTML = photos
-        .filter(p => !deletedIds.includes(String(p.id))) // Extra safety check local
+        .filter(p => p && p.id && !deletedIds.includes(String(p.id)))
         .map(p => {
           const title = p.title || 'Recordação';
           return `
@@ -193,6 +199,8 @@ async function initGallery() {
             </article>
           `;
         }).join('');
+
+      updateLoadedCount();
       initScrollReveal();
     } catch (e) {
       console.error("Gallery Load Error:", e);
