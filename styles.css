@@ -23,10 +23,11 @@
 
   /* Spacing */
   --gap-xs: 0.5rem;
-  --gap-sm: 1rem;
-  --gap-md: 1.5rem;
-  /* Reduced from 2rem */
-  --gap-lg: 3rem;
+  --gap-sm: 1.25rem;
+  --gap-md: 2.5rem;
+  /* Increased for more room */
+  --gap-lg: 5rem;
+  /* Increased for more room */
   /* Reduced from 4rem */
   --container-max: 1200px;
   --radius: 20px;
@@ -202,6 +203,9 @@ section {
 .swap-overlay {
   opacity: 0;
   z-index: 2;
+  transform: scale(0.96) translateY(2%);
+  /* Smaller and adjusted to fit watercolor */
+  transform-origin: center;
 }
 
 .img-swap:hover .swap-overlay,
@@ -267,17 +271,24 @@ section {
 
 .details-list li {
   display: flex;
-  gap: var(--gap-sm);
+  align-items: flex-start;
+  /* Better for multiline addresses */
+  gap: var(--gap-md);
 }
 
 .icon {
   font-size: 1.5rem;
+  width: 32px;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .map-wrapper {
   border-radius: var(--radius);
   overflow: hidden;
-  height: 400px;
+  height: 350px;
+  /* Smaller */
   box-shadow: var(--glass-shadow);
   border: 1px solid var(--glass-border);
 }
@@ -295,15 +306,23 @@ section {
 }
 
 .map-btn {
-  width: 50px;
-  height: 50px;
-  padding: 5px;
-  border-radius: 12px;
-  background: var(--clr-white);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 8px;
+  background: transparent;
+  /* Removed white bg */
+  box-shadow: none;
+  /* Removed border look */
   display: flex;
   align-items: center;
   justify-content: center;
+  filter: grayscale(0.2);
+}
+
+.map-btn:hover {
+  filter: grayscale(0);
+  transform: scale(1.1);
 }
 
 /* Venue Gallery */
@@ -457,12 +476,44 @@ section {
 
 .modal-container {
   position: relative;
-  background: var(--clr-white);
-  padding: var(--gap-md);
+  background: var(--clr-bg);
+  padding: 0;
   border-radius: var(--radius);
-  max-width: 90vw;
+  max-width: 95vw;
+  max-height: 95vh;
+  z-index: 10;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-img {
+  max-width: 100%;
   max-height: 90vh;
-  z-index: 1;
+  object-fit: contain;
+  display: block;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #333;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Mobile Responsive */
@@ -523,14 +574,22 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--gap-md) 0;
-  pointer-events: none;
+  padding: var(--gap-lg) 0;
+  pointer-events: auto;
+  /* Allow hover */
 }
 
 .qebra-img {
-  width: clamp(60px, 10vw, 100px);
+  width: clamp(80px, 15vw, 150px);
+  /* Bigger */
   height: auto;
-  opacity: 0.6;
+  opacity: 0.5;
+  transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.qebra-divider:hover .qebra-img {
+  opacity: 1;
+  transform: scale(1.15) rotate(5deg);
 }
 
 /* Daisy Background Specifics */
