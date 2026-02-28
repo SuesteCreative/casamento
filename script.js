@@ -82,10 +82,13 @@ function initScrollReveal() {
 /* --- CAROUSEL --- */
 function initCarousel() {
   const viewport = $('#accCarousel');
-  const [btnPrev, btnNext] = [$('.nav-btn.prev'), $('.nav-btn.next')];
+  const [btnPrev, btnNext] = [$('.carousel-side-btn.prev'), $('.carousel-side-btn.next')];
   if (!viewport || !btnPrev) return;
 
-  const scroll = (dir) => viewport.scrollBy({ left: dir * 320, behavior: 'smooth' });
+  const scroll = (dir) => {
+    const amount = viewport.clientWidth * 0.8;
+    viewport.scrollBy({ left: dir * amount, behavior: 'smooth' });
+  };
   btnNext.addEventListener('click', () => scroll(1));
   btnPrev.addEventListener('click', () => scroll(-1));
 }
@@ -208,10 +211,14 @@ async function initGallery() {
   // Handle Drop Zone click
   const dropZone = $('#dropZone');
   const fileInput = $('#fileInput');
+  const dropText = $('.drop-text', dropZone);
   if (dropZone && fileInput) {
     dropZone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => {
-      if (fileInput.files.length) $('#dropZone').innerText = `${fileInput.files.length} selecionada(s)`;
+      if (fileInput.files.length) {
+        if (dropText) dropText.innerText = `${fileInput.files.length} selecionada(s)`;
+        else dropZone.innerText = `${fileInput.files.length} selecionada(s)`;
+      }
     });
   }
 }

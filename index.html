@@ -12,7 +12,7 @@
   <link rel="preload" as="image" href="imagens/logo-head.webp" />
   <link rel="preload" as="font" href="fonts/against-Regular.woff2" type="font/woff2" crossorigin />
 
-  <link rel="stylesheet" href="styles.css?v=1.6" />
+  <link rel="stylesheet" href="styles.css?v=1.8" />
   <link rel="icon" type="image/webp" href="imagens/fav-icon.webp">
 </head>
 
@@ -98,6 +98,23 @@
           </ul>
 
 
+
+          <div class="map-links-container">
+            <div class="map-links">
+              <a href="https://ul.waze.com/ul?place=ChIJP_oMeAC1Hg0RdDKbTzFYm7k&ll=38.61662190%2C-9.20569320&navigate=yes"
+                class="map-btn waze" target="_blank" title="Abrir no Waze">
+                <img src="imagens/3Prancheta_10.webp" alt="Waze" width="40" height="40" />
+              </a>
+              <a href="https://maps.app.goo.gl/AMe48eKfDLM3Ybna9" class="map-btn google" target="_blank"
+                title="Abrir no Google Maps">
+                <img src="imagens/3Prancheta_12.webp" alt="Google Maps" width="40" height="40" />
+              </a>
+              <a href="https://maps.apple/r/IeFYpZ4k8_SuFb" class="map-btn apple" target="_blank"
+                title="Abrir no Apple Maps">
+                <img src="imagens/3Prancheta_11.webp" alt="Apple Maps" width="40" height="40" />
+              </a>
+            </div>
+          </div>
         </div>
 
         <div class="details-media">
@@ -105,20 +122,6 @@
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d36491.11427398107!2d-9.202867886893683!3d38.620556007523106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1eb500780cfa3f%3A0xb99b58314f9b3274!2sQuinta%20da%20Fal%C3%A9sia!5e1!3m2!1spt-PT!2spt!4v1766319399864!5m2!1spt-PT!2spt"
               loading="lazy" title="Mapa Localização" allowfullscreen></iframe>
-          </div>
-          <div class="map-links">
-            <a href="https://ul.waze.com/ul?place=ChIJP_oMeAC1Hg0RdDKbTzFYm7k&ll=38.61662190%2C-9.20569320&navigate=yes"
-              class="map-btn waze" target="_blank" title="Abrir no Waze">
-              <img src="imagens/3Prancheta_10.webp" alt="Waze" width="40" height="40" />
-            </a>
-            <a href="https://maps.app.goo.gl/AMe48eKfDLM3Ybna9" class="map-btn google" target="_blank"
-              title="Abrir no Google Maps">
-              <img src="imagens/3Prancheta_12.webp" alt="Google Maps" width="40" height="40" />
-            </a>
-            <a href="https://maps.apple/r/IeFYpZ4k8_SuFb" class="map-btn apple" target="_blank"
-              title="Abrir no Apple Maps">
-              <img src="imagens/3Prancheta_11.webp" alt="Apple Maps" width="40" height="40" />
-            </a>
           </div>
         </div>
       </div>
@@ -150,15 +153,14 @@
     </div>
 
     <!-- Accommodation -->
-    <section class="acc-section container" id="alojamento">
+    <section class="acc-section container text-center" id="alojamento">
       <h2 class="section-title font-against">Acomodação</h2>
       <p class="section-subtitle">Sugestões para quem precisa de sítio para ficar:</p>
 
       <div class="carousel-container">
-        <div class="carousel-nav">
-          <button class="nav-btn prev" aria-label="Anterior">&larr;</button>
-          <button class="nav-btn next" aria-label="Seguinte">&rarr;</button>
-        </div>
+        <button class="carousel-side-btn prev" aria-label="Anterior">&larr;</button>
+        <button class="carousel-side-btn next" aria-label="Seguinte">&rarr;</button>
+
         <div class="carousel-viewport" id="accCarousel">
           <div class="carousel-item">
             <a href="https://www.booking.com/hotel/pt/crowne-plaza-caparica-lisboa.pt-pt.html" target="_blank">
@@ -193,11 +195,11 @@
     </div>
 
     <!-- Memories / UGC -->
-    <section class="ugc-section container" id="memorias">
-      <div class="ugc-header">
-        <h2 class="section-title font-against">Obrigado a todos</h2>
-        <p class="section-subtitle">Por fazerem parte da nossa vida. Deixa-nos uma recordação.</p>
-        <button class="btn btn-secondary" id="btnOpenUpload">Enviar foto</button>
+    <section class="ugc-section container text-center" id="memorias">
+      <div class="ugc-header text-center">
+        <h2 class="section-title font-against w-full">Obrigado a todos</h2>
+        <p class="section-subtitle w-full">Por fazerem parte da nossa vida. Deixa-nos uma recordação.</p>
+        <button class="btn btn-secondary mx-auto" id="btnOpenUpload">Enviar foto</button>
       </div>
 
       <div class="ugc-toolbar">
@@ -246,7 +248,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=1.1" defer></script>
+  <script src="script.js?v=1.2" defer></script>
 </body>
 
 </html>
